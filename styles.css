@@ -1,0 +1,8 @@
+.pac-container {
+	z-index: 99999;
+}
+
+.ReactImageVideoLightbox > div {
+	position: fixed !important;
+	z-index: 99999;
+}
