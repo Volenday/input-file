@@ -1,6 +1,6 @@
 {
 	"name": "@volenday/input-file",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"license": "UNLICENSED",
 	"scripts": {
 		"dev": "webpack --progress --watch",
@@ -9,19 +9,24 @@
 	},
 	"main": "dist/index.min.js",
 	"peerDependencies": {
+		"@volenday/generate-thumbnail": "^0.1.0",
 		"@volenday/input-date": "^0.0.12",
-		"antd": "^3.20.1",
-		"lodash": "^4.17.14",
-		"react": "^16.8.6",
-		"react-cropper": "^1.2.0"
-	},
-	"dependencies": {
-		"@volenday/generate-thumbnail": "^0.0.6",
-		"@volenday/input-date": "^0.0.12",
-		"antd": "^3.20.1",
-		"lodash": "^4.17.14",
+		"antd": "^3.22.2",
+		"lodash": "^4.17.15",
+		"mime": "^2.4.4",
 		"react": "^16.8.6",
 		"react-cropper": "^1.2.0",
+		"react-dom": "^16.9.0"
+	},
+	"dependencies": {
+		"@volenday/generate-thumbnail": "^0.1.0",
+		"@volenday/input-date": "^0.1.16",
+		"antd": "^3.22.2",
+		"lodash": "^4.17.15",
+		"mime": "^2.4.4",
+		"react": "^16.8.6",
+		"react-cropper": "^1.2.0",
+		"react-dom": "^16.9.0",
 		"webpack": "^4.35.3"
 	},
 	"devDependencies": {

@@ -1,23 +1,39 @@
 import React, { Component, Fragment, createRef } from 'react';
-import Cropper from 'react-cropper';
 import InputDate from '@volenday/input-date';
+import Cropper from 'react-cropper';
+import mime from 'mime';
 
-import DataURIToBlob from './DataURIToBlob';
 import ImagePreview from './ImagePreview';
 
-import { Button, Popover } from 'antd';
+import DataURIToBlob from './DataURIToBlob';
 
+// ant design
+import Button from 'antd/es/button';
+import Popover from 'antd/es/popover';
+import message from 'antd/es/message';
+import Upload from 'antd/es/upload';
+import Icon from 'antd/es/icon';
+
+const { Dragger } = Upload;
+const initialState = { source: null, hasChange: false, isPopoverVisible: false, fileList: [] };
 export default class InputFile extends Component {
-	state = { source: null, hasChange: false, isPopoverVisible: false };
+	state = initialState;
 
 	cropper = createRef();
 	timer = null;
 
 	static getDerivedStateFromProps(props, state) {
-		if (!props.value && state.source) {
-			return { source: null };
+		if (!props.value && (state.hasChange || state.fileList.length > 0)) {
+			return initialState;
 		}
+
 		return null;
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		if (prevProps.id != this.props.id) {
+			this.setState(initialState);
+		}
 	}
 
 	crop = () => {
@@ -30,28 +46,122 @@ export default class InputFile extends Component {
 		}, 300);
 	};
 
-	handleChange = event => {
-		const { id, onChange } = this.props;
+	// Workaround for antd upload functionality
+	dummyRequest = ({ file, onSuccess }) => {
+		setTimeout(() => {
+			onSuccess('ok');
+		}, 0);
+	};
 
-		this.setState({ hasChange: true });
+	getAllowedFileTypes = (selectedType = 'all', isPreview = false) => {
+		const { fileType = {} } = this.props;
 
-		let files;
-		if (event.target) {
-			files = event.target.files;
+		if (!fileType.allFilesAreAllowed) {
+			if (fileType.allowedFileTypes != null) {
+				// Gets the allowed type and append ex: application/pdf, .pdf
+				let allowedFileTypes = [];
+
+				fileType.allowedFileTypes.map(d => {
+					if (fileType[`${d.value}Options`] !== undefined && fileType[`${d.value}Options`] != null)
+						fileType[`${d.value}Options`].map(type => {
+							if (selectedType == 'all' || selectedType == 'type') allowedFileTypes.push(type.value);
+
+							if (selectedType == 'all' || selectedType == 'ext')
+								allowedFileTypes.push(isPreview ? `${type.label}` : `.${type.label}`);
+						});
+				});
+
+				if (Array.isArray(allowedFileTypes) && allowedFileTypes.length >= 1) return allowedFileTypes;
+			}
 		}
+
+		// If blank, accept all types
+		return '';
+	};
+
+	isFileValid = files => {
+		const { fileType = {} } = this.props;
+		const allowedFileTypes = this.getAllowedFileTypes('type');
+
+		if (files.type != '') {
+			if (
+				typeof fileType.allFilesAreAllowed !== 'undefined' &&
+				allowedFileTypes != '' &&
+				!fileType.allFilesAreAllowed
+			) {
+				if (!allowedFileTypes.includes(files.type)) {
+					message.error(
+						`The ${mime.getExtension(
+							files.type
+						)} file type is not supported, please try again using other file types. `
+					);
+
+					return false;
+				}
+			}
+		} else {
+			message.error('Invalid file type, it may be corrupted, has no file extension|type or it is not supported.');
+			return false;
+		}
+
+		return true;
+	};
+
+	handleChange = event => {
+		if (!this.isFileValid(event.file.originFileObj)) return;
+
+		const { id, action, onChange, multiple, cropper = {} } = this.props;
+		const file = event.file.status != 'removed' ? event.file.originFileObj : null;
+		let fileList = event.fileList.filter(f => f.status != 'removed');
 
 		const reader = new FileReader();
 		reader.onload = () => {
 			this.setState({ source: reader.result });
 		};
 
-		reader.readAsDataURL(files[0]);
+		// Only show cropper if mimeType is image
+		if (`${event.file.type}`.startsWith('image/') && cropper.enabled) {
+			if (multiple) {
+				// Replace the cropper source with the next file if it is also an image.
+				const newSourceFile = fileList
+					.filter(f => {
+						return `${f.type}`.startsWith('image/') && f.status != 'removed';
+					})
+					.pop();
 
-		onChange(id, [...files]);
+				// Read the last image from the list
+				if (newSourceFile) {
+					reader.readAsDataURL(newSourceFile.originFileObj);
+				} else {
+					this.setState({ source: null });
+				}
+			} else {
+				reader.readAsDataURL(file);
+			}
+		} else {
+			// if new file is not an image and source has an image, remove it.
+			if (!multiple && this.state.source && file) {
+				this.setState({ source: null });
+			}
+		}
+
+		if (multiple) {
+			const newFileList = fileList.map(file => {
+				return file.originFileObj;
+			});
+
+			onChange(id, [...newFileList]);
+		} else {
+			// If not multiple, Prevent multiple file list and just replace the list with the new one.
+			fileList = event.file.status == 'removed' ? [] : [event.file];
+			onChange(id, [file]);
+		}
+
+		this.setState({ hasChange: action === 'add' ? false : true, fileList });
 	};
 
 	renderInput = () => {
-		const { source } = this.state;
+		const { source, fileList } = this.state;
 
 		const {
 			cropper = {},
@@ -73,20 +183,31 @@ export default class InputFile extends Component {
 			newAspectRatio = parseInt(aspectRatioFirst) / parseInt(aspectRatioSecond);
 		}
 
+		const allowedFileTypes = this.getAllowedFileTypes('ext');
+
 		return (
 			<Fragment>
 				{preview && <ImagePreview id={id} images={value} onChange={onChange} />}
-				<input
-					type="file"
+				<Dragger
 					name={id}
+					accept={allowedFileTypes}
 					autoComplete="off"
-					placeholder={placeholder || label || id}
+					customRequest={this.dummyRequest}
+					fileList={fileList}
 					onChange={this.handleChange}
 					multiple={multiple}
 					required={value.length != 0 ? false : required}
-					disabled={disabled}
-					style={{ maxWidth: '100%' }}
-				/>
+					disabled={disabled}>
+					<p className="ant-upload-drag-icon">
+						<Icon type="inbox" />
+					</p>
+					<p className="ant-upload-text">Click or drag file to this area to upload</p>
+					{allowedFileTypes !== '' && (
+						<p className="ant-upload-hint">
+							Supported files types are: {`${this.getAllowedFileTypes('ext', true)}`}
+						</p>
+					)}
+				</Dragger>
 				{enabled && source && (
 					<Cropper
 						ref={this.cropper}
@@ -95,6 +216,7 @@ export default class InputFile extends Component {
 						aspectRatio={newAspectRatio}
 						guides={false}
 						cropend={this.crop}
+						className={'mt-2'}
 					/>
 				)}
 			</Fragment>
@@ -141,7 +263,7 @@ export default class InputFile extends Component {
 
 	render() {
 		const { hasChange } = this.state;
-		const { id, label = '', required = false, withLabel = false, historyTrack = false } = this.props;
+		const { id, action, label = '', required = false, withLabel = false, historyTrack = false } = this.props;
 
 		if (withLabel) {
 			if (historyTrack) {
@@ -150,7 +272,7 @@ export default class InputFile extends Component {
 						<span class="float-left">
 							<label for={id}>{required ? `*${label}` : label}</label>
 						</span>
-						{hasChange && this.renderPopover()}
+						{hasChange && action !== 'add' && this.renderPopover()}
 						{this.renderInput()}
 					</div>
 				);
@@ -166,7 +288,7 @@ export default class InputFile extends Component {
 			if (historyTrack) {
 				return (
 					<div class="form-group">
-						{hasChange && this.renderPopover()}
+						{hasChange && action !== 'add' && this.renderPopover()}
 						{this.renderInput()}
 					</div>
 				);

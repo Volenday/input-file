@@ -56,7 +56,9 @@ module.exports = {
 		'@volenday/generate-thumbnail': 'commonjs2 @volenday/generate-thumbnail',
 		'@volenday/input-date': 'commonjs2 @volenday/input-date',
 		'react-cropper': 'commonjs2 react-cropper',
+		'react-dom': 'commonjs2 react-dom',
 		lodash: 'commonjs2 lodash',
+		mime: 'commonjs2 mime',
 		antd: 'commonjs2 antd',
 		react: 'commonjs2 react',
 		unidecode: 'commonjs2 unidecode'
