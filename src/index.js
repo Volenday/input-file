@@ -2,7 +2,7 @@ import React, { Component, Fragment, createRef } from 'react';
 import InputDate from '@volenday/input-date';
 import Cropper from 'react-cropper';
 import mime from 'mime';
-import { Button, Icon, message, Popover, Upload } from 'antd';
+import { Button, Form, Icon, message, Popover, Upload } from 'antd';
 
 import ImagePreview from './ImagePreview';
 import DataURIToBlob from './DataURIToBlob';
