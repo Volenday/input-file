@@ -2,17 +2,10 @@ import React, { Component, Fragment, createRef } from 'react';
 import InputDate from '@volenday/input-date';
 import Cropper from 'react-cropper';
 import mime from 'mime';
+import { Button, Icon, message, Popover, Upload } from 'antd';
 
 import ImagePreview from './ImagePreview';
-
 import DataURIToBlob from './DataURIToBlob';
-
-// ant design
-import Button from 'antd/es/button';
-import Popover from 'antd/es/popover';
-import message from 'antd/es/message';
-import Upload from 'antd/es/upload';
-import Icon from 'antd/es/icon';
 
 const { Dragger } = Upload;
 const initialState = { source: null, hasChange: false, isPopoverVisible: false, fileList: [] };
@@ -167,9 +160,7 @@ export default class InputFile extends Component {
 			cropper = {},
 			disabled = false,
 			id,
-			label = '',
 			onChange,
-			placeholder = '',
 			required = false,
 			multiple,
 			preview = true,
@@ -263,38 +254,19 @@ export default class InputFile extends Component {
 
 	render() {
 		const { hasChange } = this.state;
-		const { id, action, label = '', required = false, withLabel = false, historyTrack = false } = this.props;
+		const { action, label = '', historyTrack = false, required = false, withLabel = false } = this.props;
 
-		if (withLabel) {
-			if (historyTrack) {
-				return (
-					<div class="form-group">
-						<span class="float-left">
-							<label for={id}>{required ? `*${label}` : label}</label>
-						</span>
-						{hasChange && action !== 'add' && this.renderPopover()}
-						{this.renderInput()}
-					</div>
-				);
-			}
+		const formItemCommonProps = {
+			colon: false,
+			label: withLabel ? label : false,
+			required
+		};
 
-			return (
-				<div class="form-group">
-					<label for={id}>{required ? `*${label}` : label}</label>
-					{this.renderInput()}
-				</div>
-			);
-		} else {
-			if (historyTrack) {
-				return (
-					<div class="form-group">
-						{hasChange && action !== 'add' && this.renderPopover()}
-						{this.renderInput()}
-					</div>
-				);
-			}
-
-			return this.renderInput();
-		}
+		return (
+			<Form.Item {...formItemCommonProps}>
+				{historyTrack && hasChange && action !== 'add' && this.renderPopover()}
+				{this.renderInput()}
+			</Form.Item>
+		);
 	}
 }

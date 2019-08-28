@@ -1,13 +1,16 @@
 {
 	"name": "@volenday/input-file",
-	"version": "0.0.4",
-	"license": "UNLICENSED",
+	"version": "0.1.0",
+	"main": "dist/index.min.js",
+	"repository": "https://jeromemiranda@bitbucket.org/volenday-dev/input-file",
+	"author": "Volenday <developers@volenday.com>",
+	"license": "MIT",
+	"private": false,
 	"scripts": {
 		"dev": "webpack --progress --watch",
 		"build": "webpack --progress -p",
 		"prepublishOnly": "webpack --progress -p"
 	},
-	"main": "dist/index.min.js",
 	"peerDependencies": {
 		"@volenday/generate-thumbnail": "^0.1.0",
 		"@volenday/input-date": "^0.0.12",

@@ -1,8 +1,16 @@
 .pac-container {
-	z-index: 99999;
+    z-index: 99999;
 }
 
-.ReactImageVideoLightbox > div {
-	position: fixed !important;
-	z-index: 99999;
+.ReactImageVideoLightbox>div {
+    position: fixed !important;
+    z-index: 99999;
+}
+
+.ant-form-item-label {
+    line-height: 1 !important;
+}
+
+.ant-form-item-label label {
+    margin: 0px !important
 }
