@@ -8,11 +8,8 @@ export default class ImagePreview extends Component {
 		let { id, images, onChange } = this.props;
 		images = Array.isArray(images) ? images : [images];
 
-		const withImage = images.filter(d => typeof d === 'string').length;
-
 		return (
 			<div class="clearfix">
-				{!!withImage && <br />}
 				{images.map((d, i) => {
 					if (typeof d === 'string') {
 						const source = GenerateThumbnail(d);
