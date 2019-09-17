@@ -1,14 +1,13 @@
 import React, { Component, Fragment, createRef } from 'react';
-import InputDate from '@volenday/input-date';
 import Cropper from 'react-cropper';
 import mime from 'mime';
-import { Button, Form, Icon, message, Popover, Upload } from 'antd';
+import { Form, Icon, message, Upload } from 'antd';
 
 import ImagePreview from './ImagePreview';
 import DataURIToBlob from './DataURIToBlob';
 
 const { Dragger } = Upload;
-const initialState = { source: null, hasChange: false, isPopoverVisible: false, fileList: [] };
+const initialState = { source: null, fileList: [] };
 export default class InputFile extends Component {
 	state = initialState;
 
@@ -16,7 +15,7 @@ export default class InputFile extends Component {
 	timer = null;
 
 	static getDerivedStateFromProps(props, state) {
-		if (!props.value && (state.hasChange || state.fileList.length > 0)) {
+		if (!props.value && state.fileList.length > 0) {
 			return initialState;
 		}
 
@@ -103,7 +102,7 @@ export default class InputFile extends Component {
 	handleChange = event => {
 		if (!this.isFileValid(event.file.originFileObj)) return;
 
-		const { id, action, onChange, multiple, cropper = {} } = this.props;
+		const { id, onChange, multiple, cropper = {} } = this.props;
 		const file = event.file.status != 'removed' ? event.file.originFileObj : null;
 		let fileList = event.fileList.filter(f => f.status != 'removed');
 
@@ -150,7 +149,7 @@ export default class InputFile extends Component {
 			onChange(id, [file]);
 		}
 
-		this.setState({ hasChange: action === 'add' ? false : true, fileList });
+		this.setState({ fileList });
 	};
 
 	renderInput = () => {
@@ -214,47 +213,8 @@ export default class InputFile extends Component {
 		);
 	};
 
-	handlePopoverVisible = visible => {
-		this.setState({ isPopoverVisible: visible });
-	};
-
-	renderPopover = () => {
-		const { isPopoverVisible } = this.state;
-		const { id, label = '', historyTrackValue = '', onHistoryTrackChange } = this.props;
-
-		return (
-			<Popover
-				content={
-					<InputDate
-						id={id}
-						label={label}
-						required={true}
-						withTime={true}
-						withLabel={true}
-						value={historyTrackValue}
-						onChange={onHistoryTrackChange}
-					/>
-				}
-				trigger="click"
-				title="History Track"
-				visible={isPopoverVisible}
-				onVisibleChange={this.handlePopoverVisible}>
-				<span class="float-right">
-					<Button
-						type="link"
-						shape="circle-outline"
-						icon="warning"
-						size="small"
-						style={{ color: '#ffc107' }}
-					/>
-				</span>
-			</Popover>
-		);
-	};
-
 	render() {
-		const { hasChange } = this.state;
-		const { action, label = '', historyTrack = false, required = false, withLabel = false } = this.props;
+		const { label = '', required = false, withLabel = false } = this.props;
 
 		const formItemCommonProps = {
 			colon: false,
@@ -262,11 +222,6 @@ export default class InputFile extends Component {
 			required
 		};
 
-		return (
-			<Form.Item {...formItemCommonProps}>
-				{historyTrack && hasChange && action !== 'add' && this.renderPopover()}
-				{this.renderInput()}
-			</Form.Item>
-		);
+		return <Form.Item {...formItemCommonProps}>{this.renderInput()}</Form.Item>;
 	}
 }
