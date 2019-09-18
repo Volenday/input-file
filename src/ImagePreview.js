@@ -5,7 +5,7 @@ import GenerateThumbnail from '@volenday/generate-thumbnail';
 
 export default class ImagePreview extends Component {
 	render() {
-		let { id, images, onChange } = this.props;
+		const { id, images, onChange } = this.props;
 		images = Array.isArray(images) ? images : [images];
 
 		return (
@@ -38,7 +38,7 @@ export default class ImagePreview extends Component {
 												}}
 												onClick={e => {
 													e.preventDefault();
-													onChange(id, values(omit(images, [i])));
+													onChange(e, id, values(omit(images, [i])));
 												}}>
 												<i class="fa fa-times" aria-hidden="true" /> Delete
 											</a>

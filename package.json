@@ -1,6 +1,6 @@
 {
 	"name": "@volenday/input-file",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"main": "dist/index.min.js",
 	"repository": "https://jeromemiranda@bitbucket.org/volenday-dev/input-file",
 	"author": "Volenday <developers@volenday.com>",
@@ -60,6 +60,6 @@
 		"node-sass": "^4.12.0",
 		"sass-loader": "~8.0.0",
 		"style-loader": "~1.0.0",
-		"webpack-cli": "^3.3.5"
+		"webpack-cli": "^3.3.9"
 	}
 }
