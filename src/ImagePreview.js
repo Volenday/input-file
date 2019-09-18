@@ -38,7 +38,8 @@ export default class ImagePreview extends Component {
 												}}
 												onClick={e => {
 													e.preventDefault();
-													onChange(e, id, values(omit(images, [i])));
+													const newValues = values(omit(images, [i]));
+													onChange({ target: { name: id, value: newValues } }, id, newValues);
 												}}>
 												<i class="fa fa-times" aria-hidden="true" /> Delete
 											</a>

@@ -28,13 +28,14 @@ export default class InputFile extends Component {
 		}
 	}
 
-	crop = e => {
+	crop = () => {
 		const { id, onChange } = this.props;
 		const base64Url = this.cropper.current.getCroppedCanvas().toDataURL();
 
 		this.timer && clearTimeout(this.timer);
 		this.timer = setTimeout(() => {
-			onChange(e, id, DataURIToBlob(base64Url));
+			const uriToBlobValue = DataURIToBlob(base64Url);
+			onChange({ target: { name: id, value: uriToBlobValue } }, id, uriToBlobValue);
 		}, 300);
 	};
 
@@ -142,11 +143,11 @@ export default class InputFile extends Component {
 				return file.originFileObj;
 			});
 
-			onChange(event, id, [...newFileList]);
+			onChange({ target: { name: id, value: [...newFileList] } }, id, [...newFileList]);
 		} else {
 			// If not multiple, Prevent multiple file list and just replace the list with the new one.
 			fileList = event.file.status == 'removed' ? [] : [event.file];
-			onChange(event, id, [file]);
+			onChange({ target: { name: id, value: [file] } }, id, [file]);
 		}
 
 		this.setState({ fileList });
@@ -205,7 +206,7 @@ export default class InputFile extends Component {
 						style={{ height: 350, width: '100%' }}
 						aspectRatio={newAspectRatio}
 						guides={false}
-						cropend={e => this.crop(e)}
+						cropend={this.crop}
 						className={'mt-2'}
 					/>
 				)}
