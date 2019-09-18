@@ -5,7 +5,7 @@ import GenerateThumbnail from '@volenday/generate-thumbnail';
 
 export default class ImagePreview extends Component {
 	render() {
-		const { id, images, onChange } = this.props;
+		let { id, images, onChange } = this.props;
 		images = Array.isArray(images) ? images : [images];
 
 		return (
