@@ -1,6 +1,6 @@
 {
 	"name": "@volenday/input-file",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"main": "dist/index.min.js",
 	"repository": "https://jeromemiranda@bitbucket.org/volenday-dev/input-file",
 	"author": "Volenday <developers@volenday.com>",
@@ -13,25 +13,25 @@
 	},
 	"peerDependencies": {
 		"@volenday/generate-thumbnail": "^0.1.0",
-		"antd": "~3.23.3",
+		"antd": "~3.23.5",
 		"lodash": "^4.17.15",
 		"mime": "^2.4.4",
-		"react": "^16.8.6",
+		"react": "~16.10.1",
 		"react-cropper": "^1.2.0",
-		"react-dom": "^16.9.0"
+		"react-dom": "~16.10.1"
 	},
 	"dependencies": {
 		"@volenday/generate-thumbnail": "^0.1.0",
-		"antd": "~3.23.3",
+		"antd": "~3.23.5",
 		"lodash": "^4.17.15",
 		"mime": "^2.4.4",
-		"react": "^16.8.6",
+		"react": "~16.10.1",
 		"react-cropper": "^1.2.0",
-		"react-dom": "^16.9.0",
-		"webpack": "~4.40.2"
+		"react-dom": "~16.10.1",
+		"webpack": "~4.41.0"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.5.4",
+		"@babel/core": "~7.6.2",
 		"@babel/plugin-proposal-class-properties": "^7.5.0",
 		"@babel/plugin-proposal-decorators": "^7.4.4",
 		"@babel/plugin-proposal-do-expressions": "^7.5.0",
@@ -49,9 +49,9 @@
 		"@babel/plugin-syntax-dynamic-import": "^7.2.0",
 		"@babel/plugin-syntax-import-meta": "^7.2.0",
 		"@babel/plugin-transform-async-to-generator": "^7.5.0",
-		"@babel/preset-env": "^7.5.4",
+		"@babel/preset-env": "~7.6.2",
 		"@babel/preset-react": "^7.0.0",
-		"@babel/runtime": "^7.5.4",
+		"@babel/runtime": "~7.6.2",
 		"babel-loader": "^8.0.6",
 		"babel-plugin-react-html-attrs": "^2.1.0",
 		"core-js": "^3.1.4",
