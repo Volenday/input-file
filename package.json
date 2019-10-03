@@ -1,6 +1,6 @@
 {
 	"name": "@volenday/input-file",
-	"version": "0.1.8",
+	"version": "0.1.9",
 	"main": "dist/index.min.js",
 	"repository": "https://jeromemiranda@bitbucket.org/volenday-dev/input-file",
 	"author": "Volenday <developers@volenday.com>",
@@ -25,9 +25,9 @@
 		"antd": "~3.23.5",
 		"lodash": "^4.17.15",
 		"mime": "^2.4.4",
-		"react": "~16.10.1",
+		"react": "~16.10.2",
 		"react-cropper": "^1.2.0",
-		"react-dom": "~16.10.1",
+		"react-dom": "~16.10.2",
 		"webpack": "~4.41.0"
 	},
 	"devDependencies": {
