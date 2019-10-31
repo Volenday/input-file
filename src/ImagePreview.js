@@ -1,16 +1,17 @@
 import React, { Component, Fragment } from 'react';
-import { omit, values } from 'lodash';
+import { has, omit, values } from 'lodash';
 
 import GenerateThumbnail from '@volenday/generate-thumbnail';
 
 export default class ImagePreview extends Component {
 	render() {
-		let { id, images, onChange } = this.props;
+		let { id, images, onChange, source } = this.props;
 		images = Array.isArray(images) ? images : [images];
 
 		return (
 			<div class="clearfix">
 				{images.map((d, i) => {
+					console.log('d: ', d);
 					if (typeof d === 'string') {
 						const source = GenerateThumbnail(d);
 						return (
@@ -46,6 +47,30 @@ export default class ImagePreview extends Component {
 										)}
 									</Fragment>
 								)}
+							</div>
+						);
+					} else if (typeof d === 'object' && has(d, 'uid')) {
+						return (
+							<div key={d} style={{ position: 'relative', float: 'left' }}>
+								<img
+									src={source}
+									width="50px"
+									height="50px"
+									style={{ marginRight: 3, marginLeft: 3 }}
+								/>
+							</div>
+						);
+					} else if (typeof d === 'object' && has(d, 'fileName')) {
+						return (
+							<div key={d} style={{ position: 'relative', float: 'left' }}>
+								<a href={d.url} data-lightbox={id} data-title={d.fileName}>
+									<img
+										src={d.url}
+										width="50px"
+										height="50px"
+										style={{ marginRight: 3, marginLeft: 3 }}
+									/>
+								</a>
 							</div>
 						);
 					}

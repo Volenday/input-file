@@ -178,7 +178,7 @@ export default class InputFile extends Component {
 
 		return (
 			<Fragment>
-				{preview && <ImagePreview id={id} images={value} onChange={onChange} />}
+				{preview && <ImagePreview id={id} images={value} source={source} onChange={onChange} />}
 				<Dragger
 					name={id}
 					accept={allowedFileTypes}
