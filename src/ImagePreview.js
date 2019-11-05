@@ -11,7 +11,7 @@ export default class ImagePreview extends Component {
 		return (
 			<div class="clearfix">
 				{images.map((d, i) => {
-					console.log('d: ', d);
+					// console.log('d: ', d);
 					if (typeof d === 'string') {
 						const source = GenerateThumbnail(d);
 						return (
