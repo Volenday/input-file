@@ -1,6 +1,6 @@
 {
 	"name": "@volenday/input-file",
-	"version": "0.1.10",
+	"version": "0.1.11",
 	"main": "dist/index.min.js",
 	"repository": "https://jeromemiranda@bitbucket.org/volenday-dev/input-file",
 	"author": "Volenday <developers@volenday.com>",
