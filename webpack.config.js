@@ -53,13 +53,13 @@ module.exports = {
 		libraryTarget: 'commonjs2'
 	},
 	externals: {
-		'@volenday/generate-thumbnail': 'commonjs2 @volenday/generate-thumbnail',
-		antd: 'commonjs2 antd',
-		lodash: 'commonjs2 lodash',
-		mime: 'commonjs2 mime',
-		react: 'commonjs2 react',
-		'react-cropper': 'commonjs2 react-cropper',
-		'react-dom': 'commonjs2 react-dom'
+		'@volenday/generate-thumbnail': '@volenday/generate-thumbnail',
+		antd: 'antd',
+		lodash: 'lodash',
+		mime: 'mime',
+		react: 'react',
+		'react-cropper': 'react-cropper',
+		'react-dom': 'react-dom'
 	},
 	plugins: [
 		new webpack.optimize.AggressiveMergingPlugin(),

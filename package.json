@@ -1,6 +1,6 @@
 {
 	"name": "@volenday/input-file",
-	"version": "0.1.11",
+	"version": "0.1.12",
 	"main": "dist/index.min.js",
 	"repository": "https://jeromemiranda@bitbucket.org/volenday-dev/input-file",
 	"author": "Volenday <developers@volenday.com>",
@@ -11,34 +11,24 @@
 		"build": "webpack --progress -p",
 		"prepublishOnly": "webpack --progress -p"
 	},
-	"peerDependencies": {
-		"@volenday/generate-thumbnail": "^0.1.0",
-		"antd": "~3.23.5",
-		"lodash": "^4.17.15",
-		"mime": "^2.4.4",
-		"react": "~16.10.1",
-		"react-cropper": "^1.2.0",
-		"react-dom": "~16.10.1"
-	},
 	"dependencies": {
 		"@volenday/generate-thumbnail": "^0.1.0",
-		"antd": "~3.23.5",
+		"antd": "^3.25.0",
 		"lodash": "^4.17.15",
 		"mime": "^2.4.4",
-		"react": "~16.10.2",
+		"react": "^16.11.0",
 		"react-cropper": "^1.2.0",
-		"react-dom": "~16.10.2",
-		"webpack": "~4.41.0"
+		"react-dom": "^16.11.0"
 	},
 	"devDependencies": {
-		"@babel/core": "~7.6.2",
-		"@babel/plugin-proposal-class-properties": "^7.5.0",
-		"@babel/plugin-proposal-decorators": "^7.4.4",
+		"@babel/core": "^7.7.2",
+		"@babel/plugin-proposal-class-properties": "^7.7.0",
+		"@babel/plugin-proposal-decorators": "^7.7.0",
 		"@babel/plugin-proposal-do-expressions": "^7.5.0",
 		"@babel/plugin-proposal-export-default-from": "^7.5.2",
 		"@babel/plugin-proposal-export-namespace-from": "^7.5.2",
 		"@babel/plugin-proposal-function-bind": "^7.2.0",
-		"@babel/plugin-proposal-function-sent": "^7.5.0",
+		"@babel/plugin-proposal-function-sent": "^7.7.0",
 		"@babel/plugin-proposal-json-strings": "^7.2.0",
 		"@babel/plugin-proposal-logical-assignment-operators": "^7.2.0",
 		"@babel/plugin-proposal-nullish-coalescing-operator": "^7.4.4",
@@ -48,18 +38,19 @@
 		"@babel/plugin-proposal-throw-expressions": "^7.2.0",
 		"@babel/plugin-syntax-dynamic-import": "^7.2.0",
 		"@babel/plugin-syntax-import-meta": "^7.2.0",
-		"@babel/plugin-transform-async-to-generator": "^7.5.0",
-		"@babel/preset-env": "~7.6.2",
-		"@babel/preset-react": "^7.0.0",
-		"@babel/runtime": "~7.6.2",
+		"@babel/plugin-transform-async-to-generator": "^7.7.0",
+		"@babel/preset-env": "^7.7.1",
+		"@babel/preset-react": "^7.7.0",
+		"@babel/runtime": "^7.7.2",
 		"babel-loader": "^8.0.6",
 		"babel-plugin-react-html-attrs": "^2.1.0",
-		"core-js": "^3.1.4",
+		"core-js": "^3.4.0",
 		"css-loader": "^3.0.0",
 		"file-loader": "^4.0.0",
-		"node-sass": "^4.12.0",
+		"node-sass": "^4.13.0",
 		"sass-loader": "~8.0.0",
 		"style-loader": "~1.0.0",
-		"webpack-cli": "^3.3.9"
+		"webpack": "^4.41.2",
+		"webpack-cli": "^3.3.10"
 	}
 }
