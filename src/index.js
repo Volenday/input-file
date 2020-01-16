@@ -76,7 +76,7 @@ export default class InputFile extends Component {
 		const { fileType = {} } = this.props;
 		const allowedFileTypes = this.getAllowedFileTypes('type');
 
-		if (files.type != '') {
+		if (files.type != '' || files.name.includes('.keystore')) {
 			if (
 				typeof fileType.allFilesAreAllowed !== 'undefined' &&
 				allowedFileTypes != '' &&
