@@ -208,6 +208,7 @@ export default class InputFile extends Component {
 						guides={false}
 						cropend={this.crop}
 						className={'mt-2'}
+						zoomOnWheel={false}
 					/>
 				)}
 			</Fragment>
