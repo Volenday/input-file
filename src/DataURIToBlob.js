@@ -6,10 +6,7 @@ export default function DataURIToBlob(dataURI) {
 		byteString = unescape(dataURI.split(',')[1]);
 	}
 
-	const mimeString = dataURI
-		.split(',')[0]
-		.split(':')[1]
-		.split(';')[0];
+	const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
 
 	// write the bytes of the string to a typed array
 	let ia = new Uint8Array(byteString.length);
