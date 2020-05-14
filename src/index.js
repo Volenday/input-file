@@ -2,8 +2,8 @@ import React, { Component, Fragment, createRef } from 'react';
 import Cropper from 'react-cropper';
 import mime from 'mime';
 import { Form, Icon, message, Upload } from 'antd';
+import { size } from 'lodash';
 
-import ImagePreview from './ImagePreview';
 import DataURIToBlob from './DataURIToBlob';
 
 const { Dragger } = Upload;
@@ -109,6 +109,7 @@ export default class InputFile extends Component {
 
 		const reader = new FileReader();
 		reader.onload = () => {
+			console.log('reader.result: ', reader.result);
 			this.setState({ source: reader.result });
 		};
 
@@ -156,16 +157,29 @@ export default class InputFile extends Component {
 	renderInput = () => {
 		const { source, fileList } = this.state;
 
-		const {
-			cropper = {},
-			disabled = false,
-			id,
-			onChange,
-			required = false,
-			multiple,
-			preview = true,
-			value = []
-		} = this.props;
+		const { cropper = {}, disabled = false, id, required = false, multiple, value = [] } = this.props;
+
+		let newFileList = [];
+		if (!Array.isArray(value) && size(value) && !fileList.length) {
+			if (value.fileName !== '') {
+				newFileList.push({
+					uid: 1,
+					name: value.fileName,
+					status: 'done',
+					url: value.url,
+					thumbUrl: value.thumbUrl,
+					type: value.mimeType,
+					originFileObj: {
+						uid: 1,
+						name: value.fileName,
+						status: 'done',
+						url: value.url,
+						thumbUrl: value.thumbUrl,
+						type: value.mimeType
+					}
+				});
+			}
+		}
 
 		const { enabled = false, aspectRatio = null } = cropper;
 		let newAspectRatio = null;
@@ -178,17 +192,18 @@ export default class InputFile extends Component {
 
 		return (
 			<Fragment>
-				{preview && <ImagePreview id={id} images={value} source={source} onChange={onChange} />}
 				<Dragger
-					name={id}
 					accept={allowedFileTypes}
 					autoComplete="off"
 					customRequest={this.dummyRequest}
-					fileList={fileList}
-					onChange={this.handleChange}
+					disabled={disabled}
+					fileList={[...fileList, ...newFileList]}
+					listType="picture"
 					multiple={multiple}
-					required={value.length != 0 ? false : required}
-					disabled={disabled}>
+					name={id}
+					onChange={this.handleChange}
+					onRemove={this.handleRemove}
+					required={value ? (value.length != 0 ? false : required) : required}>
 					<p className="ant-upload-drag-icon">
 						<Icon type="inbox" />
 					</p>
