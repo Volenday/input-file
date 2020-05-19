@@ -2,7 +2,8 @@ import React, { Component, Fragment, createRef } from 'react';
 import Cropper from 'react-cropper';
 import mime from 'mime';
 import { Form, Icon, message, Upload } from 'antd';
-import { size } from 'lodash';
+import { has, size, omit } from 'lodash';
+import GenerateThumbnail from '@volenday/generate-thumbnail';
 
 import DataURIToBlob from './DataURIToBlob';
 
@@ -100,16 +101,25 @@ export default class InputFile extends Component {
 		return true;
 	};
 
+	tempFileList = [];
 	handleChange = event => {
-		if (!this.isFileValid(event.file.originFileObj)) return;
+		if (!has(event.file.originFileObj)) {
+			if (!this.isFileValid(event.file)) return;
+		} else {
+			if (event.file.status === 'done' || !this.isFileValid(event.file.originFileObj)) return;
+		}
 
 		const { id, onChange, multiple, cropper = {} } = this.props;
 		const file = event.file.status != 'removed' ? event.file.originFileObj : null;
 		let fileList = event.fileList.filter(f => f.status != 'removed');
 
+		if (event.file.status !== 'removed') {
+			this.tempFileList.push({ fileName: event.file.name, originFileObj: event.file.originFileObj });
+			this.tempFileList = this.tempFileList.filter(f => typeof f.fileName !== 'undefined');
+		}
+
 		const reader = new FileReader();
 		reader.onload = () => {
-			console.log('reader.result: ', reader.result);
 			this.setState({ source: reader.result });
 		};
 
@@ -141,17 +151,45 @@ export default class InputFile extends Component {
 
 		if (multiple) {
 			const newFileList = fileList.map(file => {
-				return file.originFileObj;
+				if (!has(file, 'originFileObj')) {
+					const tempFile = this.tempFileList.find(f => f.name === file.name);
+					if (typeof tempFile !== 'undefined') tempFile.originFileObj;
+				}
+
+				return has(file, 'originFileObj') ? file.originFileObj : file;
 			});
 
 			onChange({ target: { name: id, value: [...newFileList] } }, id, [...newFileList]);
+
+			this.setState({ fileList: [...newFileList] });
 		} else {
 			// If not multiple, Prevent multiple file list and just replace the list with the new one.
 			fileList = event.file.status == 'removed' ? [] : [event.file];
 			onChange({ target: { name: id, value: [file] } }, id, [file]);
+			this.setState({ fileList });
 		}
+	};
 
-		this.setState({ fileList });
+	handleTransformFile = file => {
+		const { multiple } = this.props;
+
+		const source = GenerateThumbnail(file);
+
+		setTimeout(() => {
+			this.setState({
+				fileList: this.state.fileList.map(f => {
+					if (multiple) {
+						if (file.name === f.name) {
+							f.url = source.url;
+						}
+					} else {
+						f.url = source.url;
+					}
+
+					return f;
+				})
+			});
+		}, 1000);
 	};
 
 	renderInput = () => {
@@ -160,25 +198,70 @@ export default class InputFile extends Component {
 		const { cropper = {}, disabled = false, id, required = false, multiple, value = [] } = this.props;
 
 		let newFileList = [];
-		if (!Array.isArray(value) && size(value) && !fileList.length) {
+		if (!multiple && size(value) && !fileList.length) {
 			if (value.fileName !== '') {
+				let thumb = '';
+
+				if (value.mimeType) {
+					if (value.mimeType.startsWith('image/')) thumb = value.thumbUrl;
+					else thumb = GenerateThumbnail(value.url).url;
+				}
+
+				if (value.type) {
+					if (value.type.startsWith('image/')) thumb = value.thumbUrl;
+					else thumb = GenerateThumbnail(value.url).url;
+				}
+
 				newFileList.push({
 					uid: 1,
 					name: value.fileName,
 					status: 'done',
 					url: value.url,
-					thumbUrl: value.thumbUrl,
+					thumbUrl: thumb,
 					type: value.mimeType,
 					originFileObj: {
 						uid: 1,
 						name: value.fileName,
 						status: 'done',
 						url: value.url,
-						thumbUrl: value.thumbUrl,
+						thumbUrl: thumb,
 						type: value.mimeType
 					}
 				});
 			}
+		} else if (multiple && value.length && !fileList.length) {
+			value.map((d, i) => {
+				if (d.fileName !== '') {
+					let thumb = '';
+
+					if (d.mimeType) {
+						if (d.mimeType.startsWith('image/')) thumb = d.thumbUrl;
+						else thumb = GenerateThumbnail(d.url).url;
+					}
+
+					if (d.type) {
+						if (d.type.startsWith('image/')) thumb = d.thumbUrl;
+						else thumb = GenerateThumbnail(d.url).url;
+					}
+
+					newFileList.push({
+						uid: i,
+						name: d.fileName,
+						status: 'done',
+						url: d.url,
+						thumbUrl: thumb,
+						type: d.mimeType,
+						originFileObj: {
+							uid: 1,
+							name: d.fileName,
+							status: 'done',
+							url: d.url,
+							thumbUrl: thumb,
+							type: d.mimeType
+						}
+					});
+				}
+			});
 		}
 
 		const { enabled = false, aspectRatio = null } = cropper;
@@ -203,7 +286,8 @@ export default class InputFile extends Component {
 					name={id}
 					onChange={this.handleChange}
 					onRemove={this.handleRemove}
-					required={value ? (value.length != 0 ? false : required) : required}>
+					required={value ? (value.length != 0 ? false : required) : required}
+					transformFile={this.handleTransformFile}>
 					<p className="ant-upload-drag-icon">
 						<Icon type="inbox" />
 					</p>
