@@ -11,3 +11,5 @@ jobs:
             - name: Create Pull Request
               id: cpr
               uses: peter-evans/create-pull-request@v2
+              with:
+                  token: ${{ secrets.TOKEN }}
