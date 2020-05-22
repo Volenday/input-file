@@ -1,0 +1,16 @@
+name: Pull Request
+on:
+    push:
+        branches:
+            - master
+jobs:
+    pr:
+        runs-on: ubuntu-latest
+        env:
+            GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        steps:
+            - name: Create Pull Request
+            - uses: gjvpaet/create-pull-request-action@master
+              with:
+                  githubToken: $GITHUB_TOKEN
+                  sampleInput: Hey!
