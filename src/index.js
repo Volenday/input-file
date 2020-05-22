@@ -11,7 +11,6 @@ const { Dragger } = Upload;
 const initialState = { source: null, fileList: [] };
 export default class InputFile extends Component {
 	state = initialState;
-
 	cropper = createRef();
 	timer = null;
 
