@@ -6,11 +6,13 @@ on:
 jobs:
     pr:
         runs-on: ubuntu-latest
-        env:
-            GITHUB_TOKEN: ${{ secrets.TOKEN }}
         steps:
+            - uses: action/checkout@v2
             - name: Create Pull Request
-            - uses: gjvpaet/create-pull-request-action@master
+              id: cpr
+              uses: peter-evans/create-pull-request@v2
               with:
-                  githubToken: $GITHUB_TOKEN
-                  sampleInput: Hey!
+                  token: ${{ secrets.TOKEN }}
+                  committer: Gabriel Joshua Paet <gjvpaet@gmail.com>
+                  author: ${{ github.actor }}
+                  title: Sample
