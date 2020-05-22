@@ -7,12 +7,10 @@ jobs:
     createPullRequest:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout Remote Repository
-              id: crr
+            - name: Checkout
               uses: actions/checkout@v2
-            - name: Create Pull Request
-              id: cpr
-              uses: peter-evans/create-pull-request@v2
+            - name: Test
+              id: test
+              uses: ./
               with:
-                  token: ${{ secrets.TOKEN }}
-                  request-to-parent: true
+                  whoToGreet: 'Bella'

@@ -52,5 +52,8 @@
 		"webpack": "^4.43.0",
 		"webpack-cli": "^3.3.11"
 	},
-	"dependencies": {}
+	"dependencies": {
+		"@actions/core": "^1.2.4",
+		"@actions/github": "^2.2.0"
+	}
 }

@@ -1,0 +1,10 @@
+name: Create Pull Request
+author: Volenday
+inputs:
+    githubToken:
+        description: Github personal access token
+    whoToGreet:
+        description: For test
+runs:
+    using: node12
+    main: index.js
