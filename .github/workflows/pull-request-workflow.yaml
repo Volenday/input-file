@@ -10,11 +10,9 @@ jobs:
             - name: Checkout Remote Repository
               id: crr
               uses: actions/checkout@v2
-              with:
-                  token: ${{ secrets.TOKEN }}
-                  repository: aha-volenday/input-file
             - name: Create Pull Request
               id: cpr
               uses: peter-evans/create-pull-request@v2
               with:
                   token: ${{ secrets.TOKEN }}
+                  request-to-parent: true
