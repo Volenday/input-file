@@ -4,15 +4,10 @@ on:
         branches:
             - master
 jobs:
-    pr:
+    createPullRequest:
         runs-on: ubuntu-latest
         steps:
             - uses: action/checkout@v2
             - name: Create Pull Request
               id: cpr
               uses: peter-evans/create-pull-request@v2
-              with:
-                  token: ${{ secrets.TOKEN }}
-                  committer: Gabriel Joshua Paet <gjvpaet@gmail.com>
-                  author: ${{ github.actor }}
-                  title: Sample
