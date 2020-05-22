@@ -7,7 +7,12 @@ jobs:
     createPullRequest:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
+            - name: Checkout Remote Repository
+              id: crr
+              uses: actions/checkout@v2
+              with:
+                  token: ${{ secrets.TOKEN }}
+                  repository: aha-volenday/input-file
             - name: Create Pull Request
               id: cpr
               uses: peter-evans/create-pull-request@v2
