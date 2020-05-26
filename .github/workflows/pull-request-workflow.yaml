@@ -8,9 +8,15 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
+              id: checkout
               uses: actions/checkout@v2
+              with:
+                  path: input-file
+            - name: Install Dependencies
+              id: install-deps
+              run: cd input-file/ && yarn install
             - name: Test
               id: test
               uses: ./
               with:
-                  whoToGreet: 'Bella'
+                  githubToken: d43a4364909c54dab1bdf8dd9b7aec7add8b13a2
