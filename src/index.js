@@ -2,7 +2,7 @@ import React, { Component, Fragment, createRef } from 'react';
 import Cropper from 'react-cropper';
 import mime from 'mime';
 import { Form, Icon, message, Upload } from 'antd';
-import { has, size, omit } from 'lodash';
+import { has, size } from 'lodash';
 import GenerateThumbnail from '@volenday/generate-thumbnail';
 
 import DataURIToBlob from './DataURIToBlob';
@@ -281,7 +281,7 @@ export default class InputFile extends Component {
 		return (
 			<Fragment>
 				<Dragger
-					accept={allowedFileTypes.join(',')}
+					accept={typeof allowedFileTypes === 'string' ? allowedFileTypes : allowedFileTypes.join(',')}
 					autoComplete="off"
 					customRequest={this.dummyRequest}
 					disabled={disabled}
