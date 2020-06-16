@@ -77,36 +77,41 @@ export default class InputFile extends Component {
 		const { fileType = {} } = this.props;
 		const allowedFileTypes = this.getAllowedFileTypes('type');
 
-		if (files.type != '' || files.name.includes('.keystore')) {
+		if (files.type !== '' || files.name.includes('.keystore')) {
 			if (
 				typeof fileType.allFilesAreAllowed !== 'undefined' &&
 				allowedFileTypes != '' &&
 				!fileType.allFilesAreAllowed
 			) {
 				if (!allowedFileTypes.includes(files.type)) {
-					message.error(
-						`The ${mime.getExtension(
+					return {
+						message: `The ${mime.getExtension(
 							files.type
-						)} file type is not supported, please try again using other file types. `
-					);
-
-					return false;
+						)} file type is not supported, please try again using other file types. `,
+						status: false
+					};
 				}
 			}
 		} else {
-			message.error('Invalid file type, it may be corrupted, has no file extension|type or it is not supported.');
-			return false;
+			return {
+				message: 'Invalid file type, it may be corrupted, has no file extension|type or it is not supported.',
+				status: false
+			};
 		}
 
-		return true;
+		return { status: true };
 	};
 
 	tempFileList = [];
 	handleChange = event => {
 		if (!has(event.file.originFileObj)) {
-			if (!this.isFileValid(event.file)) return;
+			if (event.file.type) {
+				const isValid = this.isFileValid(event.file);
+				if (!isValid.status) return message.error(isValid.message);
+			}
 		} else {
-			if (event.file.status === 'done' || !this.isFileValid(event.file.originFileObj)) return;
+			const isValid = this.isFileValid(event.file.originFileObj);
+			if (event.file.status === 'done' || !isValid.status) return;
 		}
 
 		const { id, onChange, multiple, cropper = {} } = this.props;
@@ -231,7 +236,7 @@ export default class InputFile extends Component {
 			}
 		} else if (multiple && value.length && !fileList.length) {
 			value.map((d, i) => {
-				if (d.fileName !== '') {
+				if (typeof d.fileName !== 'undefined' && d.fileName !== '') {
 					let thumb = '';
 
 					if (d.mimeType) {
@@ -276,7 +281,7 @@ export default class InputFile extends Component {
 		return (
 			<Fragment>
 				<Dragger
-					accept={allowedFileTypes}
+					accept={allowedFileTypes.join(',')}
 					autoComplete="off"
 					customRequest={this.dummyRequest}
 					disabled={disabled}
@@ -294,7 +299,7 @@ export default class InputFile extends Component {
 					<p className="ant-upload-text">Click or drag file to this area to upload</p>
 					{allowedFileTypes !== '' && (
 						<p className="ant-upload-hint">
-							Supported files types are: {`${this.getAllowedFileTypes('ext', true)}`}
+							Supported files types are: {`${this.getAllowedFileTypes('ext', true).join(', ')}`}
 						</p>
 					)}
 				</Dragger>
