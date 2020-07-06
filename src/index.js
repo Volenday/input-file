@@ -164,7 +164,11 @@ export default class InputFile extends Component {
 				return has(file, 'originFileObj') ? file.originFileObj : file;
 			});
 
-			onChange({ target: { name: id, value: [...newFileList] } }, id, [...newFileList]);
+			onChange(
+				{ target: { name: id, value: newFileList.length ? [...newFileList] : null } },
+				id,
+				newFileList.length ? [...newFileList] : null
+			);
 
 			this.setState({ fileList: [...newFileList] });
 		} else {
@@ -203,70 +207,74 @@ export default class InputFile extends Component {
 		const { cropper = {}, disabled = false, id, required = false, multiple, value = [] } = this.props;
 
 		let newFileList = [];
-		if (!multiple && size(value) && !fileList.length) {
-			if (value.fileName !== '') {
-				let thumb = '';
+		if (Array.isArray(value) && value.includes(null)) {
+			newFileList = [];
+		} else {
+			if (!multiple && size(value) && !fileList.length) {
+				if (value.fileName !== '') {
+					let thumb = '';
 
-				if (value.mimeType) {
-					if (value.mimeType.startsWith('image/')) thumb = value.thumbUrl;
-					else thumb = GenerateThumbnail(value.url).url;
-				}
+					if (value.mimeType) {
+						if (value.mimeType.startsWith('image/')) thumb = value.thumbUrl;
+						else thumb = GenerateThumbnail(value.url).url;
+					}
 
-				if (value.type) {
-					if (value.type.startsWith('image/')) thumb = value.thumbUrl;
-					else thumb = GenerateThumbnail(value.url).url;
-				}
+					if (value.type) {
+						if (value.type.startsWith('image/')) thumb = value.thumbUrl;
+						else thumb = GenerateThumbnail(value.url).url;
+					}
 
-				newFileList.push({
-					uid: 1,
-					name: value.fileName,
-					status: 'done',
-					url: value.url,
-					thumbUrl: thumb,
-					type: value.mimeType,
-					originFileObj: {
+					newFileList.push({
 						uid: 1,
 						name: value.fileName,
 						status: 'done',
 						url: value.url,
 						thumbUrl: thumb,
-						type: value.mimeType
-					}
-				});
-			}
-		} else if (multiple && value.length && !fileList.length) {
-			value.map((d, i) => {
-				if (typeof d.fileName !== 'undefined' && d.fileName !== '') {
-					let thumb = '';
-
-					if (d.mimeType) {
-						if (d.mimeType.startsWith('image/')) thumb = d.thumbUrl;
-						else thumb = GenerateThumbnail(d.url).url;
-					}
-
-					if (d.type) {
-						if (d.type.startsWith('image/')) thumb = d.thumbUrl;
-						else thumb = GenerateThumbnail(d.url).url;
-					}
-
-					newFileList.push({
-						uid: i,
-						name: d.fileName,
-						status: 'done',
-						url: d.url,
-						thumbUrl: thumb,
-						type: d.mimeType,
+						type: value.mimeType,
 						originFileObj: {
 							uid: 1,
+							name: value.fileName,
+							status: 'done',
+							url: value.url,
+							thumbUrl: thumb,
+							type: value.mimeType
+						}
+					});
+				}
+			} else if (multiple && value && value.length && !fileList.length) {
+				value.map((d, i) => {
+					if (typeof d.fileName !== 'undefined' && d.fileName !== '') {
+						let thumb = '';
+
+						if (d.mimeType) {
+							if (d.mimeType.startsWith('image/')) thumb = d.thumbUrl;
+							else thumb = GenerateThumbnail(d.url).url;
+						}
+
+						if (d.type) {
+							if (d.type.startsWith('image/')) thumb = d.thumbUrl;
+							else thumb = GenerateThumbnail(d.url).url;
+						}
+
+						newFileList.push({
+							uid: i,
 							name: d.fileName,
 							status: 'done',
 							url: d.url,
 							thumbUrl: thumb,
-							type: d.mimeType
-						}
-					});
-				}
-			});
+							type: d.mimeType,
+							originFileObj: {
+								uid: 1,
+								name: d.fileName,
+								status: 'done',
+								url: d.url,
+								thumbUrl: thumb,
+								type: d.mimeType
+							}
+						});
+					}
+				});
+			}
 		}
 
 		const { enabled = false, aspectRatio = null } = cropper;
@@ -290,7 +298,6 @@ export default class InputFile extends Component {
 					multiple={multiple}
 					name={id}
 					onChange={this.handleChange}
-					onRemove={this.handleRemove}
 					required={value ? (value.length != 0 ? false : required) : required}
 					transformFile={this.handleTransformFile}>
 					<p className="ant-upload-drag-icon">
