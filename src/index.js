@@ -1,13 +1,14 @@
 import React, { Component, Fragment, createRef } from 'react';
 import Cropper from 'react-cropper';
 import mime from 'mime';
-import { Form, Icon, message, Upload } from 'antd';
+import { Form, Icon, message, Skeleton } from 'antd';
 import { has, size } from 'lodash';
 import GenerateThumbnail from '@volenday/generate-thumbnail';
 
 import DataURIToBlob from './DataURIToBlob';
 
-const { Dragger } = Upload;
+const browser = typeof process.browser !== 'undefined' ? process.browser : true;
+
 const initialState = { source: null, fileList: [] };
 export default class InputFile extends Component {
 	state = initialState;
@@ -202,6 +203,10 @@ export default class InputFile extends Component {
 	};
 
 	renderInput = () => {
+		const { Upload } = require('antd');
+
+		const { Dragger } = Upload;
+
 		const { source, fileList } = this.state;
 
 		const { cropper = {}, disabled = false, id, required = false, multiple, value = [] } = this.props;
@@ -343,6 +348,14 @@ export default class InputFile extends Component {
 			validateStatus: error ? 'error' : 'success'
 		};
 
-		return <Form.Item {...formItemCommonProps}>{this.renderInput()}</Form.Item>;
+		return (
+			<Form.Item {...formItemCommonProps}>
+				{browser ? (
+					this.renderInput()
+				) : (
+					<Skeleton active paragraph={{ rows: 1, width: '100%' }} title={false} />
+				)}
+			</Form.Item>
+		);
 	}
 }
