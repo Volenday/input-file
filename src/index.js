@@ -7,7 +7,7 @@ import GenerateThumbnail from '@volenday/generate-thumbnail';
 
 import DataURIToBlob from './DataURIToBlob';
 
-const browser = typeof process.browser !== 'undefined' ? process.browser : true;
+const browser = typeof window !== 'undefined' ? true : false;
 
 const initialState = { source: null, fileList: [] };
 export default class InputFile extends Component {
