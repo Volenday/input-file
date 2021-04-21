@@ -1,7 +1,7 @@
 import React, { Component, Fragment, createRef } from 'react';
 import Cropper from 'react-cropper';
 import mime from 'mime';
-import { Form, Icon, message, Skeleton } from 'antd';
+import { Form, Icon, message, Skeleton, Tooltip } from 'antd';
 import { has, size } from 'lodash';
 import GenerateThumbnail from '@volenday/generate-thumbnail';
 
@@ -209,7 +209,7 @@ export default class InputFile extends Component {
 
 		const { source, fileList } = this.state;
 
-		const { cropper = {}, disabled = false, id, required = false, multiple, value = [] } = this.props;
+		const { cropper = {}, disabled = false, id, required = false, multiple, toolTip = {}, value = [] } = this.props;
 
 		let newFileList = [];
 		if (Array.isArray(value) && value.includes(null)) {
@@ -291,7 +291,7 @@ export default class InputFile extends Component {
 
 		const allowedFileTypes = this.getAllowedFileTypes('ext');
 
-		return (
+		const input = (
 			<Fragment>
 				<Dragger
 					accept={typeof allowedFileTypes === 'string' ? allowedFileTypes : allowedFileTypes.join(',')}
@@ -329,6 +329,8 @@ export default class InputFile extends Component {
 				)}
 			</Fragment>
 		);
+
+		return Object.keys(toolTip).length === 0 ? input : <Tooltip {...toolTip}>{input}</Tooltip>;
 	};
 
 	render() {
