@@ -4,6 +4,7 @@ import mime from 'mime';
 import { Form, Icon, message, Skeleton, Tooltip } from 'antd';
 import { has, size } from 'lodash';
 import GenerateThumbnail from '@volenday/generate-thumbnail';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 import DataURIToBlob from './DataURIToBlob';
 
@@ -209,7 +210,7 @@ export default class InputFile extends Component {
 
 		const { source, fileList } = this.state;
 
-		const { cropper = {}, disabled = false, id, required = false, multiple, toolTip = {}, value = [] } = this.props;
+		const { cropper = {}, disabled = false, id, required = false, multiple, value = [] } = this.props;
 
 		let newFileList = [];
 		if (Array.isArray(value) && value.includes(null)) {
@@ -291,7 +292,7 @@ export default class InputFile extends Component {
 
 		const allowedFileTypes = this.getAllowedFileTypes('ext');
 
-		const input = (
+		return (
 			<Fragment>
 				<Dragger
 					accept={typeof allowedFileTypes === 'string' ? allowedFileTypes : allowedFileTypes.join(',')}
@@ -329,19 +330,32 @@ export default class InputFile extends Component {
 				)}
 			</Fragment>
 		);
-
-		return Object.keys(toolTip).length === 0 ? input : <Tooltip {...toolTip}>{input}</Tooltip>;
 	};
 
 	render() {
-		const { error = null, extra = null, label = '', required = false, withLabel = false } = this.props;
+		const {
+			error = null,
+			extra = null,
+			label = '',
+			required = false,
+			withLabel = false,
+			toolTip = ''
+		} = this.props;
 
 		const formItemCommonProps = {
 			colon: false,
 			help: error ? error : '',
 			label: withLabel ? (
 				<>
-					<div style={{ float: 'right' }}>{extra}</div> <span class="label">{label}</span>
+					<div style={{ float: 'right' }}>{extra}</div>
+					<span class="label">
+						{label}{' '}
+						{toolTip && (
+							<Tooltip title={toolTip}>
+								<QuestionCircleOutlined />
+							</Tooltip>
+						)}
+					</span>
 				</>
 			) : (
 				false
