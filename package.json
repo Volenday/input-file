@@ -1,6 +1,6 @@
 {
 	"name": "@volenday/input-file",
-	"version": "2.2.0",
+	"version": "2.2.1",
 	"main": "dist/index.min.js",
 	"author": "Volenday <developers@volenday.com>",
 	"license": "MIT",
@@ -11,6 +11,7 @@
 		"prepublishOnly": "webpack --progress -p"
 	},
 	"peerDependencies": {
+		"@ant-design/icons": "^4.6.2",
 		"@volenday/generate-thumbnail": "^0.1.5",
 		"antd": "~3.26.16",
 		"lodash": "^4.17.15",

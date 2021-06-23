@@ -1,7 +1,8 @@
 import React, { Component, Fragment, createRef } from 'react';
 import Cropper from 'react-cropper';
 import mime from 'mime';
-import { Form, Icon, message, Skeleton } from 'antd';
+import { Form, message, Skeleton } from 'antd';
+import { InboxOutlined } from '@ant-design/icons';
 import { has, size } from 'lodash';
 import GenerateThumbnail from '@volenday/generate-thumbnail';
 
@@ -306,7 +307,7 @@ export default class InputFile extends Component {
 					required={value ? (value.length != 0 ? false : required) : required}
 					transformFile={this.handleTransformFile}>
 					<p className="ant-upload-drag-icon">
-						<Icon type="inbox" />
+						<InboxOutlined />
 					</p>
 					<p className="ant-upload-text">Click or drag file to this area to upload</p>
 					{allowedFileTypes !== '' && (

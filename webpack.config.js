@@ -54,6 +54,7 @@ module.exports = {
 	},
 	externals: {
 		'@volenday/generate-thumbnail': '@volenday/generate-thumbnail',
+		'@ant-design/icons': '@ant-design/icons',
 		antd: 'antd',
 		lodash: 'lodash',
 		mime: 'mime',
