@@ -333,11 +333,17 @@ export default class InputFile extends Component {
 	};
 
 	render() {
-		const { error = null, extra = null, label = '', required = false, withLabel = false } = this.props;
+		const {
+			error = null,
+			extra = null,
+			inlineError = true,
+			label = '',
+			required = false,
+			withLabel = false
+		} = this.props;
 
-		const formItemCommonProps = {
+		let formItemCommonProps = {
 			colon: false,
-			help: error ? error : '',
 			label: withLabel ? (
 				<>
 					<div style={{ float: 'right' }}>{extra}</div> <span class="label">{label}</span>
@@ -348,6 +354,7 @@ export default class InputFile extends Component {
 			required,
 			validateStatus: error ? 'error' : 'success'
 		};
+		if (inlineError) formItemCommonProps = { ...formItemCommonProps, help: error ? error : '' };
 
 		return (
 			<Form.Item {...formItemCommonProps}>
