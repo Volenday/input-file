@@ -3,7 +3,7 @@ import Cropper from 'react-cropper';
 import mime from 'mime';
 import { Form, message, Skeleton } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import { has, size } from 'lodash';
+import { has, size, uniqBy } from 'lodash';
 import GenerateThumbnail from '@volenday/generate-thumbnail';
 
 import DataURIToBlob from './DataURIToBlob';
@@ -210,9 +210,45 @@ export default class InputFile extends Component {
 
 		const { source, fileList } = this.state;
 
-		const { cropper = {}, disabled = false, id, required = false, multiple, value = [] } = this.props;
+		const { cropper = {}, disabled = false, id, required = false, multiple, value = [], pastedFile } = this.props;
 
 		let newFileList = [];
+
+		if (Array.isArray(pastedFile) && !pastedFile.includes(null)) {
+			pastedFile.map((d, i) => {
+				if (typeof d.name !== 'undefined' && d.name !== '') {
+					let thumb = '';
+
+					if (d.mimeType) {
+						if (d.mimeType.startsWith('image/')) thumb = d.thumbUrl;
+						else thumb = GenerateThumbnail(d.url).url;
+					}
+
+					if (d.type) {
+						if (d.type.startsWith('image/')) thumb = d.thumbUrl;
+						else thumb = GenerateThumbnail(d.url).url;
+					}
+
+					newFileList.push({
+						uid: i,
+						name: d.name,
+						status: 'done',
+						url: d.url,
+						thumbUrl: thumb,
+						type: d.type,
+						originFileObj: {
+							uid: i,
+							name: d.name,
+							status: 'done',
+							url: d.url,
+							thumbUrl: thumb,
+							type: d.type
+						}
+					});
+				}
+			});
+		}
+
 		if (Array.isArray(value) && value.includes(null)) {
 			newFileList = [];
 		} else {
