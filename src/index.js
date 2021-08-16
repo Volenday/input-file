@@ -210,7 +210,16 @@ export default class InputFile extends Component {
 
 		const { source, fileList } = this.state;
 
-		const { cropper = {}, disabled = false, id, required = false, multiple, value = [], pastedFile } = this.props;
+		const {
+			cropper = {},
+			disabled = false,
+			id,
+			multiple,
+			onRemove,
+			pastedFile,
+			required = false,
+			value = []
+		} = this.props;
 
 		let newFileList = [];
 
@@ -340,6 +349,7 @@ export default class InputFile extends Component {
 					multiple={multiple}
 					name={id}
 					onChange={this.handleChange}
+					onRemove={onRemove}
 					required={value ? (value.length != 0 ? false : required) : required}
 					transformFile={this.handleTransformFile}>
 					<p className="ant-upload-drag-icon">
