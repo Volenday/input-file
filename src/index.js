@@ -263,15 +263,17 @@ export default class InputFile extends Component {
 			newFileList = [];
 		} else {
 			if (!multiple && size(value) && !fileList.length) {
+				const hasUrl = value.url ? true : false;
+
 				if (value.fileName !== '') {
 					let thumb = '';
 
-					if (value.mimeType) {
+					if (value.mimeType && hasUrl) {
 						if (value.mimeType.startsWith('image/')) thumb = value.thumbUrl;
 						else thumb = GenerateThumbnail(value.url).url;
 					}
 
-					if (value.type) {
+					if (value.type && hasUrl) {
 						if (value.type.startsWith('image/')) thumb = value.thumbUrl;
 						else thumb = GenerateThumbnail(value.url).url;
 					}
@@ -280,14 +282,14 @@ export default class InputFile extends Component {
 						uid: 1,
 						name: value.fileName,
 						status: 'done',
-						url: value.url,
+						url: hasUrl ? value.url : '',
 						thumbUrl: thumb,
 						type: value.mimeType,
 						originFileObj: {
 							uid: 1,
 							name: value.fileName,
 							status: 'done',
-							url: value.url,
+							url: hasUrl ? value.url : '',
 							thumbUrl: thumb,
 							type: value.mimeType
 						}
@@ -295,12 +297,12 @@ export default class InputFile extends Component {
 				} else if (value.name !== '') {
 					let thumb = '';
 
-					if (value.mimeType) {
+					if (value.mimeType && hasUrl) {
 						if (value.mimeType.startsWith('image/')) thumb = value.thumbUrl;
 						else thumb = GenerateThumbnail(value.url).url;
 					}
 
-					if (value.type) {
+					if (value.type && hasUrl) {
 						if (value.type.startsWith('image/')) thumb = value.thumbUrl;
 						else thumb = GenerateThumbnail(value.url).url;
 					}
@@ -309,14 +311,14 @@ export default class InputFile extends Component {
 						uid: 1,
 						name: value.name,
 						status: 'done',
-						url: value.url,
+						url: hasUrl ? value.url : '',
 						thumbUrl: thumb,
 						type: value.type,
 						originFileObj: {
 							uid: 1,
 							name: value.name,
 							status: 'done',
-							url: value.url,
+							url: hasUrl ? value.url : '',
 							thumbUrl: thumb,
 							type: value.type
 						}
@@ -324,15 +326,17 @@ export default class InputFile extends Component {
 				}
 			} else if (multiple && value && value.length !== 0) {
 				value.map((d, i) => {
+					const hasUrl = d.url ? true : false;
+
 					if (typeof d.fileName !== 'undefined' && d.fileName !== '') {
 						let thumb = '';
 
-						if (d.mimeType) {
+						if (d.mimeType && hasUrl) {
 							if (d.mimeType.startsWith('image/')) thumb = d.thumbUrl;
 							else thumb = GenerateThumbnail(d.url).url;
 						}
 
-						if (d.type) {
+						if (d.type && hasUrl) {
 							if (d.type.startsWith('image/')) thumb = d.thumbUrl;
 							else thumb = GenerateThumbnail(d.url).url;
 						}
@@ -341,14 +345,14 @@ export default class InputFile extends Component {
 							uid: i,
 							name: d.fileName,
 							status: 'done',
-							url: d.url,
+							url: hasUrl ? d.url : '',
 							thumbUrl: thumb,
 							type: d.mimeType,
 							originFileObj: {
 								uid: 1,
 								name: d.fileName,
 								status: 'done',
-								url: d.url,
+								url: hasUrl ? d.url : '',
 								thumbUrl: thumb,
 								type: d.mimeType
 							}
@@ -356,12 +360,12 @@ export default class InputFile extends Component {
 					} else if (d.name && d.name !== '') {
 						let thumb = '';
 
-						if (d.mimeType) {
+						if (d.mimeType && hasUrl) {
 							if (d.mimeType.startsWith('image/')) thumb = d.thumbUrl;
 							else thumb = GenerateThumbnail(d.url).url;
 						}
 
-						if (d.type) {
+						if (d.type && hasUrl) {
 							if (d.type.startsWith('image/')) thumb = d.thumbUrl;
 							else thumb = GenerateThumbnail(d.url).url;
 						}
@@ -370,14 +374,14 @@ export default class InputFile extends Component {
 							uid: i,
 							name: d.name,
 							status: 'done',
-							url: d.url,
+							url: hasUrl ? d.url : '',
 							thumbUrl: thumb,
 							type: d.type,
 							originFileObj: {
 								uid: 1,
 								name: d.name,
 								status: 'done',
-								url: d.url,
+								url: hasUrl ? d.url : '',
 								thumbUrl: thumb,
 								type: d.type
 							}
