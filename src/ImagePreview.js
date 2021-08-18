@@ -9,7 +9,6 @@ export default ({ id, images, onChange, source }) => {
 	return (
 		<div class="clearfix">
 			{newImages.map((d, i) => {
-				// console.log('d: ', d);
 				if (typeof d === 'string') {
 					const source = GenerateThumbnail(d);
 					return (

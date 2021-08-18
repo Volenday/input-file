@@ -3,7 +3,7 @@ import Cropper from 'react-cropper';
 import mime from 'mime';
 import { Form, message, Skeleton } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import { has, size, uniqBy } from 'lodash';
+import { has, size } from 'lodash';
 import GenerateThumbnail from '@volenday/generate-thumbnail';
 
 import DataURIToBlob from './DataURIToBlob';
@@ -169,14 +169,15 @@ export default class InputFile extends Component {
 			onChange(
 				{ target: { name: id, value: newFileList.length ? [...newFileList] : null } },
 				id,
-				newFileList.length ? [...newFileList] : null
+				newFileList.length ? [...newFileList] : null,
+				fileList.map(d => d.status)
 			);
 
 			this.setState({ fileList: [...newFileList] });
 		} else {
 			// If not multiple, Prevent multiple file list and just replace the list with the new one.
 			fileList = event.file.status == 'removed' ? [] : [event.file];
-			onChange({ target: { name: id, value: [file] } }, id, [file]);
+			onChange({ target: { name: id, value: [file] } }, id, [file], [event.file.status]);
 			this.setState({ fileList });
 		}
 	};
@@ -291,8 +292,37 @@ export default class InputFile extends Component {
 							type: value.mimeType
 						}
 					});
+				} else if (value.name !== '') {
+					let thumb = '';
+
+					if (value.mimeType) {
+						if (value.mimeType.startsWith('image/')) thumb = value.thumbUrl;
+						else thumb = GenerateThumbnail(value.url).url;
+					}
+
+					if (value.type) {
+						if (value.type.startsWith('image/')) thumb = value.thumbUrl;
+						else thumb = GenerateThumbnail(value.url).url;
+					}
+
+					newFileList.push({
+						uid: 1,
+						name: value.name,
+						status: 'done',
+						url: value.url,
+						thumbUrl: thumb,
+						type: value.type,
+						originFileObj: {
+							uid: 1,
+							name: value.name,
+							status: 'done',
+							url: value.url,
+							thumbUrl: thumb,
+							type: value.type
+						}
+					});
 				}
-			} else if (multiple && value && value.length && !fileList.length) {
+			} else if (multiple && value && value.length !== 0) {
 				value.map((d, i) => {
 					if (typeof d.fileName !== 'undefined' && d.fileName !== '') {
 						let thumb = '';
@@ -323,6 +353,35 @@ export default class InputFile extends Component {
 								type: d.mimeType
 							}
 						});
+					} else if (d.name && d.name !== '') {
+						let thumb = '';
+
+						if (d.mimeType) {
+							if (d.mimeType.startsWith('image/')) thumb = d.thumbUrl;
+							else thumb = GenerateThumbnail(d.url).url;
+						}
+
+						if (d.type) {
+							if (d.type.startsWith('image/')) thumb = d.thumbUrl;
+							else thumb = GenerateThumbnail(d.url).url;
+						}
+
+						newFileList.push({
+							uid: i,
+							name: d.name,
+							status: 'done',
+							url: d.url,
+							thumbUrl: thumb,
+							type: d.type,
+							originFileObj: {
+								uid: 1,
+								name: d.name,
+								status: 'done',
+								url: d.url,
+								thumbUrl: thumb,
+								type: d.type
+							}
+						});
 					}
 				});
 			}
@@ -344,7 +403,7 @@ export default class InputFile extends Component {
 					autoComplete="off"
 					customRequest={this.dummyRequest}
 					disabled={disabled}
-					fileList={[...fileList, ...newFileList]}
+					fileList={[...newFileList]}
 					listType="picture"
 					multiple={multiple}
 					name={id}
