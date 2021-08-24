@@ -11,14 +11,14 @@
 		"prepublishOnly": "webpack --progress -p"
 	},
 	"peerDependencies": {
-		"@ant-design/icons": "^4.6.2",
+		"@ant-design/icons": "^4.6.3",
 		"@volenday/generate-thumbnail": "^0.1.5",
-		"antd": "~4.16.12",
-		"lodash": "^4.17.15",
-		"mime": "^2.4.4",
-		"react": "^16.13.1",
-		"react-cropper": "^1.2.0",
-		"react-dom": "^16.13.1"
+		"antd": "^4.16.13",
+		"lodash": "^4.17.21",
+		"mime": "^2.5.2",
+		"react": "^17.0.2",
+		"react-cropper": "^2.1.8",
+		"react-dom": "^17.0.2"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.12.7",
@@ -52,6 +52,5 @@
 		"style-loader": "^2.0.0",
 		"webpack": "^4.43.0",
 		"webpack-cli": "^3.3.11"
-	},
-	"dependencies": {}
+	}
 }
