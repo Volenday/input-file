@@ -163,7 +163,8 @@ export default class InputFile extends Component {
 					if (typeof tempFile !== 'undefined') tempFile.originFileObj;
 				}
 
-				return has(file, 'originFileObj') ? file.originFileObj : file;
+				const tempFile = this.tempFileList.find(f => f.fileName === file.name);
+				return typeof tempFile === 'undefined' ? file.originFileObj : tempFile.originFileObj;
 			});
 
 			onChange(
