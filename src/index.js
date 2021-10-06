@@ -261,7 +261,7 @@ export default class InputFile extends Component {
 		}
 
 		if (Array.isArray(value) && value.includes(null)) {
-			newFileList = [];
+			newFileList = value.filter(d => d);
 		} else {
 			if (!multiple && size(value) && !fileList.length) {
 				const hasUrl = value.url ? true : false;
@@ -389,6 +389,8 @@ export default class InputFile extends Component {
 						});
 					}
 				});
+			} else {
+				newFileList = fileList;
 			}
 		}
 
