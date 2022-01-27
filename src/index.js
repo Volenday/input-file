@@ -7,6 +7,7 @@ import { has, size } from 'lodash';
 import GenerateThumbnail from '@volenday/generate-thumbnail';
 
 import DataURIToBlob from './DataURIToBlob';
+import getFileName from './getFileName';
 
 const browser = typeof window !== 'undefined' ? true : false;
 
@@ -242,7 +243,7 @@ export default class InputFile extends Component {
 
 					newFileList.push({
 						uid: i,
-						name: d.name,
+						name: getFileName(d.name),
 						status: 'done',
 						url: d.url,
 						thumbUrl: thumb,
@@ -281,7 +282,7 @@ export default class InputFile extends Component {
 
 					newFileList.push({
 						uid: 1,
-						name: value.fileName,
+						name: getFileName(value.fileName),
 						status: 'done',
 						url: hasUrl ? value.url : '',
 						thumbUrl: thumb,
@@ -310,7 +311,7 @@ export default class InputFile extends Component {
 
 					newFileList.push({
 						uid: 1,
-						name: value.name,
+						name: getFileName(value.name),
 						status: 'done',
 						url: hasUrl ? value.url : '',
 						thumbUrl: thumb,
@@ -344,7 +345,7 @@ export default class InputFile extends Component {
 
 						newFileList.push({
 							uid: i,
-							name: d.fileName,
+							name: getFileName(d.fileName),
 							status: 'done',
 							url: hasUrl ? d.url : '',
 							thumbUrl: thumb,
@@ -373,7 +374,7 @@ export default class InputFile extends Component {
 
 						newFileList.push({
 							uid: i,
-							name: d.name,
+							name: getFileName(d.name),
 							status: 'done',
 							url: hasUrl ? d.url : '',
 							thumbUrl: thumb,

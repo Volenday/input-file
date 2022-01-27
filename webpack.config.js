@@ -60,7 +60,8 @@ module.exports = {
 		mime: 'mime',
 		react: 'react',
 		'react-cropper': 'react-cropper',
-		'react-dom': 'react-dom'
+		'react-dom': 'react-dom',
+		uuid: 'uuid'
 	},
 	plugins: [
 		new webpack.optimize.AggressiveMergingPlugin(),
