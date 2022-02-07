@@ -1,6 +1,6 @@
 import { validate as uuidValidate } from 'uuid';
 
-const getFileName = fileName => {
+const getFileName = (fileName = '') => {
 	const [fileNameWithoutExtension, extension] = fileName.split('.');
 	const fileNameSplit = fileNameWithoutExtension.split('-');
 	const fileNameUUID = fileNameSplit.slice(fileNameSplit.length - 5, fileNameSplit.length).join('-');
