@@ -296,7 +296,7 @@ export default class InputFile extends Component {
 							type: value.mimeType
 						}
 					});
-				} else if (value.name !== '') {
+				} else if (value.name !== '' && typeof value.name !== 'undefined') {
 					let thumb = '';
 
 					if (value.mimeType && hasUrl) {
