@@ -267,7 +267,7 @@ export default class InputFile extends Component {
 			if (!multiple && size(value) && !fileList.length) {
 				const hasUrl = value.url ? true : false;
 
-				if (value.fileName !== '') {
+				if (typeof value.fileName !== 'undefined' && value.fileName !== '') {
 					let thumb = '';
 
 					if (value.mimeType && hasUrl) {
