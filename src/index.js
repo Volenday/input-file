@@ -3,7 +3,7 @@ import Cropper from 'react-cropper';
 import mime from 'mime';
 import { Form, message, Skeleton } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import { has, size } from 'lodash';
+import { has, size, isObject } from 'lodash';
 import GenerateThumbnail from '@volenday/generate-thumbnail';
 
 import DataURIToBlob from './DataURIToBlob';
@@ -261,137 +261,84 @@ export default class InputFile extends Component {
 			});
 		}
 
-		if (Array.isArray(value) && value.includes(null)) {
-			newFileList = value.filter(d => d);
-		} else {
-			if (!multiple && size(value) && !fileList.length) {
-				const hasUrl = value.url ? true : false;
+		const generateThumbnail = (d, hasUrl) => {
+			let thumb = '';
 
-				if (typeof value.fileName !== 'undefined' && value.fileName !== '') {
-					let thumb = '';
+			if (d.mimeType && hasUrl) {
+				if (d.mimeType.startsWith('image/')) thumb = d.thumbUrl;
+				else thumb = GenerateThumbnail(d.url).url;
+			}
 
-					if (value.mimeType && hasUrl) {
-						if (value.mimeType.startsWith('image/')) thumb = value.thumbUrl;
-						else thumb = GenerateThumbnail(value.url).url;
-					}
+			if (d.type && hasUrl) {
+				if (d.type.startsWith('image/')) thumb = d.thumbUrl;
+				else thumb = GenerateThumbnail(d.url).url;
+			}
 
-					if (value.type && hasUrl) {
-						if (value.type.startsWith('image/')) thumb = value.thumbUrl;
-						else thumb = GenerateThumbnail(value.url).url;
-					}
+			return thumb;
+		};
 
-					newFileList.push({
-						uid: 1,
-						name: getFileName(value.fileName),
-						status: 'done',
-						url: hasUrl ? value.url : '',
-						thumbUrl: thumb,
-						type: value.mimeType,
-						originFileObj: {
-							uid: 1,
-							name: value.fileName,
-							status: 'done',
-							url: hasUrl ? value.url : '',
-							thumbUrl: thumb,
-							type: value.mimeType
-						}
-					});
-				} else if (value.name !== '' && typeof value.name !== 'undefined') {
-					let thumb = '';
+		const generateFileObject = (d, i = 1) => {
+			const hasUrl = d.url ? true : false;
 
-					if (value.mimeType && hasUrl) {
-						if (value.mimeType.startsWith('image/')) thumb = value.thumbUrl;
-						else thumb = GenerateThumbnail(value.url).url;
-					}
+			const newFileName = d?.fileName && d.fileName !== '' ? getFileName(d.fileName) : 'file_name';
+			const newName = d?.name && d.name !== '' ? getFileName(d.name) : 'file_name';
 
-					if (value.type && hasUrl) {
-						if (value.type.startsWith('image/')) thumb = value.thumbUrl;
-						else thumb = GenerateThumbnail(value.url).url;
-					}
-
-					newFileList.push({
-						uid: 1,
-						name: getFileName(value.name),
-						status: 'done',
-						url: hasUrl ? value.url : '',
-						thumbUrl: thumb,
-						type: value.type,
-						originFileObj: {
-							uid: 1,
-							name: value.name,
-							status: 'done',
-							url: hasUrl ? value.url : '',
-							thumbUrl: thumb,
-							type: value.type
-						}
-					});
+			let data = {
+				uid: i,
+				name: newFileName,
+				status: 'done',
+				url: hasUrl ? d.url : '',
+				thumbUrl: generateThumbnail(d, hasUrl),
+				type: d.mimeType,
+				originFileObj: {
+					uid: i,
+					name: newFileName,
+					status: 'done',
+					url: hasUrl ? d.url : '',
+					thumbUrl: generateThumbnail(d, hasUrl),
+					type: d.mimeType
 				}
-			} else if (multiple && value && value.length !== 0) {
-				value.map((d, i) => {
-					const hasUrl = d.url ? true : false;
+			};
 
-					if (typeof d.fileName !== 'undefined' && d.fileName !== '') {
-						let thumb = '';
-
-						if (d.mimeType && hasUrl) {
-							if (d.mimeType.startsWith('image/')) thumb = d.thumbUrl;
-							else thumb = GenerateThumbnail(d.url).url;
-						}
-
-						if (d.type && hasUrl) {
-							if (d.type.startsWith('image/')) thumb = d.thumbUrl;
-							else thumb = GenerateThumbnail(d.url).url;
-						}
-
-						newFileList.push({
-							uid: i,
-							name: getFileName(d.fileName),
-							status: 'done',
-							url: hasUrl ? d.url : '',
-							thumbUrl: thumb,
-							type: d.mimeType,
-							originFileObj: {
-								uid: 1,
-								name: d.fileName,
-								status: 'done',
-								url: hasUrl ? d.url : '',
-								thumbUrl: thumb,
-								type: d.mimeType
-							}
-						});
-					} else if (d.name && d.name !== '') {
-						let thumb = '';
-
-						if (d.mimeType && hasUrl) {
-							if (d.mimeType.startsWith('image/')) thumb = d.thumbUrl;
-							else thumb = GenerateThumbnail(d.url).url;
-						}
-
-						if (d.type && hasUrl) {
-							if (d.type.startsWith('image/')) thumb = d.thumbUrl;
-							else thumb = GenerateThumbnail(d.url).url;
-						}
-
-						newFileList.push({
-							uid: i,
-							name: getFileName(d.name),
-							status: 'done',
-							url: hasUrl ? d.url : '',
-							thumbUrl: thumb,
-							type: d.type,
-							originFileObj: {
-								uid: 1,
-								name: d.name,
-								status: 'done',
-								url: hasUrl ? d.url : '',
-								thumbUrl: thumb,
-								type: d.type
-							}
-						});
-					}
+			if (typeof d.fileName !== undefined && d.fileName !== '')
+				newFileList.push({
+					...data,
+					name: newFileName,
+					originFileObj: { ...data.originFileObj, name: newFileName }
 				});
-			} else {
+			else if (typeof d.name !== undefined && d.name !== '')
+				newFileList.push({
+					...data,
+					name: newName,
+					originFileObj: { ...data.originFileObj, name: newFileName }
+				});
+		};
+
+		if (Array.isArray(value) && value.includes(null)) {
+			// typeof Array && remove null values
+
+			const filterFileList = value.filter(d => d);
+			newFileList = filterFileList.map((d, i) => generateFileObject(d, i));
+		} else {
+			// typeof Array
+
+			if (fileList.length > 0) {
+				// fileList exists
+
 				newFileList = fileList;
+			} else {
+				// no fileList exists
+
+				if (!multiple && size(value) === 1) {
+					// single item
+
+					const file = value[0];
+					generateFileObject(file);
+				} else if (multiple && value.length > 1) {
+					// multiple items
+
+					value.map((d, i) => generateFileObject(d, i));
+				}
 			}
 		}
 
