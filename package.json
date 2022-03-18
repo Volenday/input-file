@@ -1,6 +1,6 @@
 {
 	"name": "@volenday/input-file",
-	"version": "2.2.15",
+	"version": "2.2.16",
 	"main": "dist/index.min.js",
 	"author": "Volenday <developers@volenday.com>",
 	"license": "MIT",
@@ -12,7 +12,7 @@
 	},
 	"peerDependencies": {
 		"@ant-design/icons": "^4.6.3",
-		"@volenday/generate-thumbnail": "^0.1.5",
+		"@volenday/generate-thumbnail": "^1.0.0",
 		"antd": "^4.16.13",
 		"lodash": "^4.17.21",
 		"mime": "^2.5.2",
