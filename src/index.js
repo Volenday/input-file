@@ -122,7 +122,10 @@ export default class InputFile extends Component {
 		let fileList = event.fileList.filter(f => f.status != 'removed');
 
 		if (event.file.status !== 'removed') {
-			this.tempFileList.push({ fileName: event.file.name, originFileObj: event.file.originFileObj });
+			this.tempFileList.push({
+				fileName: event.file.name,
+				originFileObj: event.file.originFileObj
+			});
 			this.tempFileList = this.tempFileList.filter(f => typeof f.fileName !== 'undefined');
 		}
 
@@ -169,7 +172,12 @@ export default class InputFile extends Component {
 			});
 
 			onChange(
-				{ target: { name: id, value: newFileList.length ? [...newFileList] : null } },
+				{
+					target: {
+						name: id,
+						value: newFileList.length ? [...newFileList] : null
+					}
+				},
 				id,
 				newFileList.length ? [...newFileList] : null,
 				fileList.map(d => d.status)
@@ -264,7 +272,7 @@ export default class InputFile extends Component {
 		if (Array.isArray(value) && value.includes(null)) {
 			const filterFileList = value.filter(d => d);
 		} else {
-			if (!multiple && size(value) === 1 && !fileList.length === 0) {
+			if (!multiple && size(value) === 1 && fileList.length === 0) {
 				const file = Array.isArray(value) ? value[0] : value;
 				const hasUrl = file.url ? true : false;
 
@@ -402,6 +410,87 @@ export default class InputFile extends Component {
 			}
 		}
 
+		// const generateThumbnail = (d, hasUrl) => {
+		// 	let thumb = '';
+
+		// 	if (d.mimeType && hasUrl) {
+		// 		if (d.mimeType.startsWith('image/')) thumb = d.thumbUrl;
+		// 		else thumb = GenerateThumbnail(d.url).url;
+		// 	}
+
+		// 	if (d.type && hasUrl) {
+		// 		if (d.type.startsWith('image/')) thumb = d.thumbUrl;
+		// 		else thumb = GenerateThumbnail(d.url).url;
+		// 	}
+
+		// 	return thumb;
+		// };
+
+		// const generateFileObject = (d, i = 1) => {
+		// 	const hasUrl = d.url ? true : false;
+
+		// 	const newFileName = d?.fileName && d.fileName !== '' ? getFileName(d.fileName) : 'file_name';
+		// 	const newName = d?.name && d.name !== '' ? getFileName(d.name) : 'file_name';
+
+		// 	let data = {
+		// 		uid: i,
+		// 		name: newFileName,
+		// 		status: 'done',
+		// 		url: hasUrl ? d.url : '',
+		// 		thumbUrl: generateThumbnail(d, hasUrl),
+		// 		type: d.mimeType,
+		// 		originFileObj: {
+		// 			uid: i,
+		// 			name: newFileName,
+		// 			status: 'done',
+		// 			url: hasUrl ? d.url : '',
+		// 			thumbUrl: generateThumbnail(d, hasUrl),
+		// 			type: d.mimeType
+		// 		}
+		// 	};
+
+		// 	if (typeof d.fileName !== undefined && d.fileName !== '')
+		// 		newFileList.push({
+		// 			...data,
+		// 			name: newFileName,
+		// 			originFileObj: { ...data.originFileObj, name: newFileName }
+		// 		});
+		// 	else if (typeof d.name !== undefined && d.name !== '')
+		// 		newFileList.push({
+		// 			...data,
+		// 			name: newName,
+		// 			originFileObj: { ...data.originFileObj, name: newFileName }
+		// 		});
+		// };
+
+		// if (Array.isArray(value) && value.includes(null)) {
+		// 	// typeof Array && remove null values
+
+		// 	const filterFileList = value.filter(d => d);
+		// 	newFileList = filterFileList.map((d, i) => generateFileObject(d, i));
+		// } else {
+		// 	// typeof Array
+
+		// 	if (fileList.length > 0) {
+		// 		// fileList exists
+
+		// 		newFileList = fileList;
+		// 	} else {
+		// 		// no fileList exists
+
+		// 		if (!multiple && size(value) === 1) {
+		// 			// single item
+
+		// 			const file = value[0];
+		// 			generateFileObject(file);
+		// 		} else if (multiple && value.length > 1) {
+		// 			// multiple items
+
+		// 			value.map((d, i) => generateFileObject(d, i));
+		// 		}
+		// 	}
+		// }
+
 		const { enabled = false, aspectRatio = null } = cropper;
 		let newAspectRatio = null;
 		if (aspectRatio) {
@@ -474,7 +563,11 @@ export default class InputFile extends Component {
 			required,
 			validateStatus: error ? 'error' : 'success'
 		};
-		if (inlineError) formItemCommonProps = { ...formItemCommonProps, help: error ? error : '' };
+		if (inlineError)
+			formItemCommonProps = {
+				...formItemCommonProps,
+				help: error ? error : ''
+			};
 
 		return (
 			<Form.Item {...formItemCommonProps}>
