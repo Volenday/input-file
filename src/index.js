@@ -114,7 +114,7 @@ export default class InputFile extends Component {
 			}
 		} else {
 			const isValid = this.isFileValid(event.file.originFileObj);
-			if (event.file.status === 'done' || !isValid.status) return;
+			if (event.file.status === 'done' || !isValid.status) return message.error(isValid.message);
 		}
 
 		const { id, onChange, multiple, cropper = {} } = this.props;
@@ -402,7 +402,12 @@ export default class InputFile extends Component {
 			newAspectRatio = parseInt(aspectRatioFirst) / parseInt(aspectRatioSecond);
 		}
 
-		const allowedFileTypes = this.getAllowedFileTypes('ext');
+		let allowedFileTypes = this.getAllowedFileTypes('ext');
+
+		if (Array.isArray(allowedFileTypes) && allowedFileTypes.includes('.jpeg/jpg')) {
+			allowedFileTypes = allowedFileTypes.filter(type => type !== '.jpeg/jpg');
+			allowedFileTypes = ['.jpeg', '.jpg', ...allowedFileTypes];
+		}
 
 		return (
 			<Fragment>
