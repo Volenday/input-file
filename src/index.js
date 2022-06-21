@@ -61,16 +61,17 @@ export default class InputFile extends Component {
 				fileType.allowedFileTypes.map(d => {
 					if (fileType[`${d.value}Options`] !== undefined && fileType[`${d.value}Options`] != null)
 						fileType[`${d.value}Options`].map(type => {
-							if (selectedType == 'all' || selectedType == 'type')
-								type.label === 'bmp'
-									? allowedFileTypes.push('image/bmp')
-									: allowedFileTypes.push(type.value);
-
+							if (selectedType == 'all' || selectedType == 'type') {
+								if (type.label !== 'bmp') {
+									allowedFileTypes.push(type.value);
+								}
+							}
 							if (selectedType == 'all' || selectedType == 'ext')
-								allowedFileTypes.push(isPreview ? `${type.label}` : `.${type.label}`);
+								if (type.label !== 'bmp') {
+									allowedFileTypes.push(isPreview ? `${type.label}` : `.${type.label}`);
+								}
 						});
 				});
-
 				if (Array.isArray(allowedFileTypes) && allowedFileTypes.length >= 1) return allowedFileTypes;
 			}
 		}
