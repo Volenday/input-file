@@ -1,4 +1,4 @@
-import React, { Component, Fragment, createRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Cropper from 'react-cropper';
 import mime from 'mime';
 import { Form, message, Skeleton } from 'antd';
@@ -11,47 +11,38 @@ import getFileName from './getFileName';
 
 const browser = typeof window !== 'undefined' ? true : false;
 
-const initialState = { source: null, fileList: [] };
-export default class InputFile extends Component {
-	state = initialState;
+const InputFile = props => {
+	const [source, setSource] = useState(null);
+	const [fileList, setFileList] = useState([]);
 
-	cropper = createRef();
-	timer = null;
+	const cropperRef = useRef();
+	const timer = null;
 
-	static getDerivedStateFromProps(props, state) {
-		if (!props.value && state.fileList.length > 0) {
-			return initialState;
-		}
+	useEffect(() => {
+		setSource(null);
+		setFileList([]);
+	}, [props.id]);
 
-		return null;
-	}
+	const crop = () => {
+		const { id, onChange } = props;
+		const base64Url = cropperRef.current.getCroppedCanvas().toDataURL();
 
-	componentDidUpdate(prevProps) {
-		if (prevProps.id != this.props.id) {
-			this.setState(initialState);
-		}
-	}
-
-	crop = () => {
-		const { id, onChange } = this.props;
-		const base64Url = this.cropper.current.getCroppedCanvas().toDataURL();
-
-		this.timer && clearTimeout(this.timer);
-		this.timer = setTimeout(() => {
+		timer && clearTimeout(timer);
+		timer = setTimeout(() => {
 			const uriToBlobValue = DataURIToBlob(base64Url);
 			onChange({ target: { name: id, value: uriToBlobValue } }, id, uriToBlobValue);
 		}, 300);
 	};
 
 	// Workaround for antd upload functionality
-	dummyRequest = ({ file, onSuccess }) => {
+	const dummyRequest = ({ file, onSuccess }) => {
 		setTimeout(() => {
 			onSuccess('ok');
 		}, 0);
 	};
 
-	getAllowedFileTypes = (selectedType = 'all', isPreview = false) => {
-		const { fileType = {} } = this.props;
+	const getAllowedFileTypes = (selectedType = 'all', isPreview = false) => {
+		const { fileType = {} } = props;
 
 		if (!fileType.allFilesAreAllowed) {
 			if (fileType.allowedFileTypes != null) {
@@ -80,9 +71,9 @@ export default class InputFile extends Component {
 		return '';
 	};
 
-	isFileValid = files => {
-		const { fileType = {} } = this.props;
-		const allowedFileTypes = this.getAllowedFileTypes('type');
+	const isFileValid = files => {
+		const { fileType = {} } = props;
+		const allowedFileTypes = getAllowedFileTypes('type');
 
 		if (files.type !== '' || files.name.includes('.keystore')) {
 			if (
@@ -109,30 +100,30 @@ export default class InputFile extends Component {
 		return { status: true };
 	};
 
-	tempFileList = [];
-	handleChange = event => {
+	let tempFileList = [];
+	const handleChange = event => {
 		if (!has(event.file.originFileObj)) {
 			if (event.file.type) {
-				const isValid = this.isFileValid(event.file);
+				const isValid = isFileValid(event.file);
 				if (!isValid.status) return message.error(isValid.message);
 			}
 		} else {
-			const isValid = this.isFileValid(event.file.originFileObj);
+			const isValid = isFileValid(event.file.originFileObj);
 			if (event.file.status === 'done' || !isValid.status) return message.error(isValid.message);
 		}
 
-		const { id, onChange, multiple, cropper = {} } = this.props;
+		const { id, onChange, multiple, cropper = {} } = props;
 		const file = event.file.status != 'removed' ? event.file.originFileObj : null;
 		let fileList = event.fileList.filter(f => f.status != 'removed');
 
 		if (event.file.status !== 'removed') {
-			this.tempFileList.push({ fileName: event.file.name, originFileObj: event.file.originFileObj });
-			this.tempFileList = this.tempFileList.filter(f => typeof f.fileName !== 'undefined');
+			tempFileList.push({ fileName: event.file.name, originFileObj: event.file.originFileObj });
+			tempFileList = tempFileList.filter(f => typeof f.fileName !== 'undefined');
 		}
 
 		const reader = new FileReader();
 		reader.onload = () => {
-			this.setState({ source: reader.result });
+			setSource(reader.result);
 		};
 
 		// Only show cropper if mimeType is image
@@ -149,26 +140,26 @@ export default class InputFile extends Component {
 				if (newSourceFile) {
 					reader.readAsDataURL(newSourceFile.originFileObj);
 				} else {
-					this.setState({ source: null });
+					setSource(null);
 				}
 			} else {
 				reader.readAsDataURL(file);
 			}
 		} else {
 			// if new file is not an image and source has an image, remove it.
-			if (!multiple && this.state.source && file) {
-				this.setState({ source: null });
+			if (!multiple && source && file) {
+				setSource(null);
 			}
 		}
 
 		if (multiple) {
 			const newFileList = fileList.map(file => {
 				if (!has(file, 'originFileObj')) {
-					const tempFile = this.tempFileList.find(f => f.name === file.name);
+					const tempFile = tempFileList.find(f => f.name === file.name);
 					if (typeof tempFile !== 'undefined') tempFile.originFileObj;
 				}
 
-				const tempFile = this.tempFileList.find(f => f.fileName === file.name);
+				const tempFile = tempFileList.find(f => f.fileName === file.name);
 				return typeof tempFile === 'undefined' ? file.originFileObj : tempFile.originFileObj;
 			});
 
@@ -178,24 +169,23 @@ export default class InputFile extends Component {
 				newFileList.length ? [...newFileList] : null,
 				fileList.map(d => d.status)
 			);
-
-			this.setState({ fileList: [...newFileList] });
+			setFileList([...newFileList]);
 		} else {
 			// If not multiple, Prevent multiple file list and just replace the list with the new one.
 			fileList = event.file.status == 'removed' ? [] : [event.file];
 			onChange({ target: { name: id, value: [file] } }, id, [file], [event.file.status]);
-			this.setState({ fileList });
+			setFileList(fileList);
 		}
 	};
 
-	handleTransformFile = file => {
-		const { multiple } = this.props;
+	const handleTransformFile = file => {
+		const { multiple } = props;
 
 		const source = GenerateThumbnail(file);
 
 		setTimeout(() => {
-			this.setState({
-				fileList: this.state.fileList.map(f => {
+			setFileList(
+				fileList.map(f => {
 					if (multiple) {
 						if (file.name === f.name) {
 							f.url = source.url;
@@ -206,16 +196,14 @@ export default class InputFile extends Component {
 
 					return f;
 				})
-			});
+			);
 		}, 1000);
 	};
 
-	renderInput = () => {
+	const renderInput = () => {
 		const { Upload } = require('antd');
 
 		const { Dragger } = Upload;
-
-		const { source, fileList } = this.state;
 
 		const {
 			cropper = {},
@@ -226,7 +214,7 @@ export default class InputFile extends Component {
 			pastedFile,
 			required = false,
 			value = []
-		} = this.props;
+		} = props;
 
 		let newFileList = [];
 
@@ -406,86 +394,74 @@ export default class InputFile extends Component {
 			newAspectRatio = parseInt(aspectRatioFirst) / parseInt(aspectRatioSecond);
 		}
 
-		let allowedFileTypes = this.getAllowedFileTypes('ext');
-
+		let allowedFileTypes = getAllowedFileTypes('ext');
 		if (Array.isArray(allowedFileTypes) && allowedFileTypes.includes('.jpeg/jpg')) {
 			allowedFileTypes = allowedFileTypes.filter(type => type !== '.jpeg/jpg');
 			allowedFileTypes = ['.jpeg', '.jpg', ...allowedFileTypes];
 		}
 
 		return (
-			<Fragment>
+			<>
 				<Dragger
 					accept={typeof allowedFileTypes === 'string' ? allowedFileTypes : allowedFileTypes.join(',')}
 					autoComplete="off"
-					customRequest={this.dummyRequest}
+					customRequest={dummyRequest}
 					disabled={disabled}
 					fileList={[...newFileList]}
 					listType="picture"
 					multiple={multiple}
 					name={id}
-					onChange={this.handleChange}
+					onChange={handleChange}
 					onRemove={onRemove}
 					required={value ? (value.length != 0 ? false : required) : required}
-					transformFile={this.handleTransformFile}>
+					transformFile={handleTransformFile}>
 					<p className="ant-upload-drag-icon">
 						<InboxOutlined />
 					</p>
 					<p className="ant-upload-text">Click or drag file to this area to upload</p>
 					{allowedFileTypes !== '' && (
 						<p className="ant-upload-hint">
-							Supported files types are: {`${this.getAllowedFileTypes('ext', true).join(', ')}`}
+							Supported files types are: {`${getAllowedFileTypes('ext', true).join(', ')}`}
 						</p>
 					)}
 				</Dragger>
 				{enabled && source && (
 					<Cropper
-						ref={this.cropper}
+						ref={cropperRef}
 						src={source}
 						style={{ height: 350, width: '100%' }}
 						aspectRatio={newAspectRatio}
 						guides={false}
-						cropend={this.crop}
+						cropend={crop}
 						className={'mt-2'}
 						zoomOnWheel={false}
 					/>
 				)}
-			</Fragment>
+			</>
 		);
 	};
 
-	render() {
-		const {
-			error = null,
-			extra = null,
-			inlineError = true,
-			label = '',
-			required = false,
-			withLabel = false
-		} = this.props;
+	const { error = null, extra = null, inlineError = true, label = '', required = false, withLabel = false } = props;
 
-		let formItemCommonProps = {
-			colon: false,
-			label: withLabel ? (
-				<>
-					<div style={{ float: 'right' }}>{extra}</div> <span class="label">{label}</span>
-				</>
-			) : (
-				false
-			),
-			required,
-			validateStatus: error ? 'error' : 'success'
-		};
-		if (inlineError) formItemCommonProps = { ...formItemCommonProps, help: error ? error : '' };
+	let formItemCommonProps = {
+		colon: false,
+		label: withLabel ? (
+			<>
+				<div style={{ float: 'right' }}>{extra}</div> <span class="label">{label}</span>
+			</>
+		) : (
+			false
+		),
+		required,
+		validateStatus: error ? 'error' : 'success'
+	};
+	if (inlineError) formItemCommonProps = { ...formItemCommonProps, help: error ? error : '' };
 
-		return (
-			<Form.Item {...formItemCommonProps}>
-				{browser ? (
-					this.renderInput()
-				) : (
-					<Skeleton active paragraph={{ rows: 1, width: '100%' }} title={false} />
-				)}
-			</Form.Item>
-		);
-	}
-}
+	return (
+		<Form.Item {...formItemCommonProps}>
+			{browser ? renderInput() : <Skeleton active paragraph={{ rows: 1, width: '100%' }} title={false} />}
+		</Form.Item>
+	);
+};
+
+export default InputFile;
