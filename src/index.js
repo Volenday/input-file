@@ -256,65 +256,66 @@ const InputFile = props => {
 		if (Array.isArray(value) && value.includes(null)) {
 			newFileList = value.filter(d => d);
 		} else {
-			if (!multiple && size(value) && !fileList.length) {
-				const hasUrl = value.url ? true : false;
+			if (!multiple && size(value[0]) && !fileList.length) {
+				const onlyValue = value[0];
+				const hasUrl = onlyValue.url ? true : false;
 
-				if (typeof value.fileName !== 'undefined' && value.fileName !== '') {
+				if (typeof onlyValue.fileName !== 'undefined' && onlyValue.fileName !== '') {
 					let thumb = '';
 
-					if (value.mimeType && hasUrl) {
-						if (value.mimeType.startsWith('image/')) thumb = value.thumbUrl;
-						else thumb = GenerateThumbnail(value.url).url;
+					if (onlyValue.mimeType && hasUrl) {
+						if (onlyValue.mimeType.startsWith('image/')) thumb = onlyValue.thumbUrl;
+						else thumb = GenerateThumbnail(onlyValue.url).url;
 					}
 
-					if (value.type && hasUrl) {
-						if (value.type.startsWith('image/')) thumb = value.thumbUrl;
-						else thumb = GenerateThumbnail(value.url).url;
+					if (onlyValue.type && hasUrl) {
+						if (onlyValue.type.startsWith('image/')) thumb = onlyValue.thumbUrl;
+						else thumb = GenerateThumbnail(onlyValue.url).url;
 					}
 
 					newFileList.push({
 						uid: 1,
-						name: getFileName(value.fileName),
+						name: getFileName(onlyValue.fileName),
 						status: 'done',
-						url: hasUrl ? value.url : '',
+						url: hasUrl ? onlyValue.url : '',
 						thumbUrl: thumb,
-						type: value.mimeType,
+						type: onlyValue.mimeType,
 						originFileObj: {
 							uid: 1,
-							name: value.fileName,
+							name: onlyValue.fileName,
 							status: 'done',
-							url: hasUrl ? value.url : '',
+							url: hasUrl ? onlyValue.url : '',
 							thumbUrl: thumb,
-							type: value.mimeType
+							type: onlyValue.mimeType
 						}
 					});
-				} else if (value.name !== '' && typeof value.name !== 'undefined') {
+				} else if (onlyValue.name !== '' && typeof onlyValue.name !== 'undefined') {
 					let thumb = '';
 
-					if (value.mimeType && hasUrl) {
-						if (value.mimeType.startsWith('image/')) thumb = value.thumbUrl;
-						else thumb = GenerateThumbnail(value.url).url;
+					if (onlyValue.mimeType && hasUrl) {
+						if (onlyValue.mimeType.startsWith('image/')) thumb = onlyValue.thumbUrl;
+						else thumb = GenerateThumbnail(onlyValue.url).url;
 					}
 
-					if (value.type && hasUrl) {
-						if (value.type.startsWith('image/')) thumb = value.thumbUrl;
-						else thumb = GenerateThumbnail(value.url).url;
+					if (onlyValue.type && hasUrl) {
+						if (onlyValue.type.startsWith('image/')) thumb = onlyValue.thumbUrl;
+						else thumb = GenerateThumbnail(onlyValue.url).url;
 					}
 
 					newFileList.push({
 						uid: 1,
-						name: getFileName(value.name),
+						name: getFileName(onlyValue.name),
 						status: 'done',
-						url: hasUrl ? value.url : '',
+						url: hasUrl ? onlyValue.url : '',
 						thumbUrl: thumb,
-						type: value.type,
+						type: onlyValue.type,
 						originFileObj: {
 							uid: 1,
-							name: value.name,
+							name: onlyValue.name,
 							status: 'done',
-							url: hasUrl ? value.url : '',
+							url: hasUrl ? onlyValue.url : '',
 							thumbUrl: thumb,
-							type: value.type
+							type: onlyValue.type
 						}
 					});
 				}
