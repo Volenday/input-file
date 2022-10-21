@@ -256,8 +256,8 @@ const InputFile = props => {
 		if (Array.isArray(value) && value.includes(null)) {
 			newFileList = value.filter(d => d);
 		} else {
-			if (!multiple && size(value[0]) && !fileList.length) {
-				const onlyValue = value[0];
+			if (!multiple && size(value) && !fileList.length) {
+				let onlyValue = Array.isArray(value) ? value[0] : value;
 				const hasUrl = onlyValue.url ? true : false;
 
 				if (typeof onlyValue.fileName !== 'undefined' && onlyValue.fileName !== '') {
